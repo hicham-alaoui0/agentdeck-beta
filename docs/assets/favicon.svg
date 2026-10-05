@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#b7f7dc"/>
+      <stop offset="48%" stop-color="#6ee7b7"/>
+      <stop offset="100%" stop-color="#34b98a"/>
+    </linearGradient>
+  </defs>
+  <rect x="48" y="48" width="928" height="928" rx="210" fill="#0b0d10"/>
+  <!-- Blip, the crew's original (characters.tsx), idle, scaled from its 64x64 drawing. -->
+  <g transform="translate(96 83) scale(13)">
+    <rect x="15" y="33" width="6" height="9.5" rx="3" fill="#34b98a" transform="rotate(22 18 35)"/>
+    <rect x="43" y="33" width="6" height="9.5" rx="3" fill="#34b98a" transform="rotate(-22 46 35)"/>
+    <rect x="18" y="10" width="28" height="42" rx="11" fill="url(#skin)"/>
+    <ellipse cx="26.4" cy="18.4" rx="2.8" ry="4.2" fill="#fff" opacity="0.5"/>
+    <circle cx="26.4" cy="25.5" r="1.1" fill="#fff" opacity="0.5"/>
+    <ellipse cx="23" cy="32.2" rx="2.5" ry="1.5" fill="#ff5f8f" opacity="0.32"/>
+    <ellipse cx="41" cy="32.2" rx="2.5" ry="1.5" fill="#ff5f8f" opacity="0.32"/>
+    <ellipse cx="27.2" cy="27" rx="2.5" ry="3.8" fill="#1b1f27"/>
+    <ellipse cx="36.8" cy="27" rx="2.5" ry="3.8" fill="#1b1f27"/>
+    <circle cx="28.1" cy="25.5" r="0.85" fill="#fff"/>
+    <circle cx="37.7" cy="25.5" r="0.85" fill="#fff"/>
+    <path d="M30.2 33.8q1.8 1.6 3.6 0" fill="none" stroke="#1b1f27" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+</svg>

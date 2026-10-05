@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy policy · AgentDeck</title>
+    <meta name="description" content="AgentDeck collects nothing. Everything stays on your computer." />
+    <meta name="theme-color" content="#050506" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .doc {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 150px var(--gutter) 120px;
+      }
+      .doc h1 {
+        font-size: clamp(2.4rem, 6vw, 3.6rem);
+      }
+      .doc .updated {
+        margin-top: 14px;
+        color: var(--faint);
+        font: 500 13px var(--mono);
+      }
+      .doc .short {
+        margin-top: 36px;
+        padding: 20px 24px;
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(48, 209, 88, 0.08), rgba(48, 209, 88, 0.02));
+        box-shadow: inset 0 0 0 1px rgba(48, 209, 88, 0.28);
+        font-size: 18px;
+        line-height: 1.5;
+      }
+      .doc h2 {
+        margin-top: 56px;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+      .doc p,
+      .doc li {
+        color: #c9c9ce;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      .doc p {
+        margin-top: 14px;
+      }
+      .doc ul {
+        margin: 14px 0 0;
+        padding-left: 20px;
+      }
+      .doc li + li {
+        margin-top: 10px;
+      }
+      .doc b,
+      .doc strong {
+        color: var(--text);
+      }
+      .doc code {
+        color: var(--text);
+      }
+      .doc a {
+        color: #64b5ff;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .back {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        z-index: 50;
+        translate: -50% 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 46px;
+        padding: 0 18px 0 12px;
+        border-radius: 0 0 20px 20px;
+        background: #000;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.09),
+          0 18px 50px rgba(0, 0, 0, 0.55);
+        font-weight: 620;
+        font-size: 14.5px;
+        transition: transform 160ms var(--ease-out);
+      }
+      .back:active {
+        transform: scale(0.97);
+      }
+      .back svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="back" href="index.html">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
+      <span class="face" data-mascot="blip" data-mood="idle" data-size="26" data-aura="0" data-greet="0"></span>
+      AgentDeck
+    </a>
+    <main class="doc">
+      <h1>Privacy policy</h1>
+      <p class="updated">Last updated: 5 October 2026</p>
+      <p class="short"><strong>Short version: AgentDeck collects nothing. Everything stays on your computer.</strong></p>
+
+      <h2>What AgentDeck does with your data</h2>
+      <ul>
+        <li><b>No telemetry, no analytics, no accounts.</b> AgentDeck never sends anything to its author or to any server.</li>
+        <li>
+          <b>What it reads, locally:</b> the session files and logs of Claude Code and Codex on your computer, and the
+          permission requests those agents send it through their hooks. It does not read their login credentials.
+        </li>
+        <li>
+          <b>What it stores, locally</b> in <code>%APPDATA%\AgentDeck</code>: your rules, settings, usage numbers, and an
+          audit log of approval requests (kept 90 days). Uninstalling with <b>Delete the application data</b> ticked
+          removes all of it.
+        </li>
+        <li>
+          <b>Network:</b> the only network use is the optional <b>CI status</b> feature. When you turn it on, AgentDeck
+          asks <em>your</em> GitHub CLI (<code>gh</code>) for the status of your repository's GitHub Actions after an
+          agent pushes. That request goes from your computer to GitHub under your own GitHub account, as if you ran
+          <code>gh</code> yourself. It is off by default.
+        </li>
+      </ul>
+
+      <h2>When you send feedback</h2>
+      <p>
+        <b>Send feedback</b> opens a GitHub issue page in your browser. Whatever you write or attach there (such as a
+        diagnostic bundle) is shared under
+        <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's privacy statement</a>.
+        The diagnostic bundle is created only when you click <b>Export</b>, saved to your Downloads folder so you can
+        look at it first, and contains versions, settings and counts: no commands, code, prompts or file paths. Your
+        user name and computer name are removed.
+      </p>
+
+      <h2>This website</h2>
+      <p>No cookies, no analytics, and no third-party requests: fonts and images are served from this site.</p>
+
+      <h2>Changes</h2>
+      <p>
+        If this ever changes (for example, an optional update check), it will be listed here and in the changelog, and
+        it will be off until you turn it on.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Use <b>Send feedback</b> in the app, or
+        <a href="https://github.com/hicham-alaoui0/agentdeck-beta/issues/new/choose" rel="noopener">open an issue</a>.
+      </p>
+    </main>
+    <footer class="foot">
+      <div class="wrap foot-legal" style="margin-top: 0">
+        <p>
+          AgentDeck is an independent tool, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude
+          Code are trademarks of Anthropic; OpenAI and Codex are trademarks of OpenAI.
+        </p>
+        <p>© 2026 AgentDeck</p>
+      </div>
+    </footer>
+    <script src="js/crew.js"></script>
+    <script>
+      Crew.mount(document);
+    </script>
+  </body>
+</html>

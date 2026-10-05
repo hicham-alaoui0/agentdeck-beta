@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgentDeck: a little island for your AI coding agents</title>
+    <meta
+      name="description"
+      content="AgentDeck is a little island at the top of your Windows screen that keeps an eye on Claude Code and Codex. Approve, answer and reply from one place. Free while in beta."
+    />
+    <meta name="theme-color" content="#030304" />
+    <meta property="og:title" content="AgentDeck: a little island for your AI coding agents" />
+    <meta
+      property="og:description"
+      content="See every Claude Code and Codex session at a glance, answer permission requests from one place, and know when it matters. Windows 10 & 11."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://hicham-alaoui0.github.io/agentdeck-beta/" />
+    <link rel="canonical" href="https://hicham-alaoui0.github.io/agentdeck-beta/" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/fonts/inter-opsz-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- ============ The nav is an island, like the app ============ -->
+    <header class="nav" id="nav">
+      <div class="nav-isl" id="navIsl">
+        <div class="nav-row">
+          <a class="nav-brand" href="#top" aria-label="AgentDeck, back to top">
+            <span class="nav-face" data-mascot="blip" data-mood="idle" data-size="30" data-aura="0" data-greet="0"></span>
+            <span class="collapse c-brand"><span>AgentDeck</span></span>
+          </a>
+          <span class="collapse c-status" aria-hidden="true">
+            <span class="nav-status"><span class="nav-label" id="navLabel">AgentDeck</span><i class="pip" id="navPip"></i></span>
+          </span>
+          <nav class="collapse c-links" aria-label="Main">
+            <span class="nav-links">
+              <a href="#how">How it works</a>
+              <a href="#crew">Crew</a>
+              <a href="#features">Features</a>
+              <a href="#safety">Safety</a>
+              <a href="#privacy">Privacy</a>
+              <a href="#faq">FAQ</a>
+            </span>
+          </nav>
+          <span class="collapse c-cta">
+            <span><a class="nav-cta" href="#get" data-download>Download</a></span>
+          </span>
+          <button class="nav-menu" id="navMenu" aria-expanded="false" aria-controls="navPanel" aria-label="Open menu">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h12M4 13h12" /></svg>
+          </button>
+        </div>
+        <div class="nav-panel" id="navPanel">
+          <div>
+            <a href="#how">How it works</a>
+            <a href="#crew">Meet the crew</a>
+            <a href="#features">Features</a>
+            <a href="#safety">Safety</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#faq">FAQ</a>
+            <a class="nav-cta wide" href="#get" data-download>Download for Windows</a>
+          </div>
+        </div>
+        <span class="nav-progress" aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ============ Hero ============ -->
+      <section class="hero" id="top">
+        <div class="hero-bg" aria-hidden="true">
+          <div class="hero-light"></div>
+          <canvas class="dust" id="dust"></canvas>
+          <div class="hero-grid"></div>
+          <div class="hero-tint"></div>
+        </div>
+
+        <div class="wrap hero-copy">
+          <a class="badge reveal" href="#how">
+            <span class="badge-live"><i></i>Free beta</span>
+            <span class="badge-txt">Now on Windows 10 &amp; 11</span>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+          </a>
+          <h1 class="hero-title" id="heroTitle">
+            <span class="metal">Your coding agents,</span><br />
+            <span class="metal">on one little</span> <em class="lux">island.</em>
+          </h1>
+          <p class="lead reveal" style="--d: 420ms">
+            AgentDeck lives at the top of your screen and keeps watch over <strong>Claude Code</strong> and
+            <strong>Codex</strong>. It drops down the moment an agent needs you, so you can approve, answer or reply
+            without hunting for the right terminal.
+          </p>
+          <div class="hero-ctas reveal" style="--d: 520ms">
+            <a class="btn-primary" href="#get" data-download>
+              <svg class="win-glyph" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 1h6.5v6.5H1zM8.5 1H15v6.5H8.5zM1 8.5h6.5V15H1zM8.5 8.5H15V15H8.5z" /></svg>
+              <span>Download for Windows</span>
+            </a>
+            <a class="btn-glass" href="#how">
+              Watch it work
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" /></svg>
+            </a>
+          </div>
+          <ul class="trust reveal" style="--d: 620ms">
+            <li>Works with <b>Claude Code</b> &amp; <b>Codex</b></li>
+            <li>No account</li>
+            <li>Nothing leaves your PC</li>
+          </ul>
+        </div>
+
+        <!-- The live demo: a desktop with three agents and the island on top -->
+        <div class="wrap wide demo" id="how">
+          <div class="tilt" id="tilt">
+            <div class="monitor">
+              <span class="cam" aria-hidden="true"></span>
+              <div class="stage-wrap" id="stage" role="region" aria-label="Interactive demo of the AgentDeck island">
+                <div class="wall" aria-hidden="true"></div>
+                <div class="stage" aria-hidden="true">
+                  <div class="win" id="term-a" style="left: 34px; top: 92px; width: 520px; height: 426px">
+                    <div class="win-bar">
+                      <span class="win-tab"><i class="pip working"></i>claude · portfolio-v2</span>
+                      <span class="win-plus">+</span>
+                      <span class="win-ctrls"><i>&#8211;</i><i>&#9633;</i><i>&#10005;</i></span>
+                    </div>
+                    <div class="win-body"></div>
+                  </div>
+                  <div class="win" id="term-b" style="left: 596px; top: 70px; width: 492px; height: 246px">
+                    <div class="win-bar">
+                      <span class="win-tab"><i class="pip working"></i>codex · api-server</span>
+                      <span class="win-plus">+</span>
+                      <span class="win-ctrls"><i>&#8211;</i><i>&#9633;</i><i>&#10005;</i></span>
+                    </div>
+                    <div class="win-body"></div>
+                  </div>
+                  <div class="win" id="term-c" style="left: 640px; top: 334px; width: 452px; height: 236px">
+                    <div class="win-bar">
+                      <span class="win-tab"><i class="pip working"></i>claude · agentdeck</span>
+                      <span class="win-plus">+</span>
+                      <span class="win-ctrls"><i>&#8211;</i><i>&#9633;</i><i>&#10005;</i></span>
+                    </div>
+                    <div class="win-body"></div>
+                  </div>
+                  <div class="taskbar">
+                    <span class="tb-apps">
+                      <i class="tb-start"><svg viewBox="0 0 16 16"><path d="M1 1h6.5v6.5H1zM8.5 1H15v6.5H8.5zM1 8.5h6.5V15H1zM8.5 8.5H15V15H8.5z" /></svg></i>
+                      <i class="tb-search"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" /><path d="m10.5 10.5 3.5 3.5" /></svg></i>
+                      <i class="tb-term on"><svg viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="2" /><path d="m4.5 6.5 2 1.5-2 1.5M8 10h3.5" /></svg></i>
+                      <i class="tb-folder"><svg viewBox="0 0 16 16"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.6l1.4 1.5h6a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z" /></svg></i>
+                      <i class="tb-web"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" /><path d="M2 8h12M8 2c2 2 2 10 0 12M8 2c-2 2-2 10 0 12" /></svg></i>
+                    </span>
+                    <span class="tb-tray">
+                      <img src="assets/favicon.svg" alt="" />
+                      <span class="tb-clock"><b>10:42</b><small>06/10/2026</small></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="isl-layer">
+                  <div class="isl" id="isl" data-mode="compact"><span class="beam"></span></div>
+                </div>
+                <div class="fcursor" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.3-4.1 2.8 6.4 2.7-1.2-2.8-6.3h6z" /></svg>
+                </div>
+                <div class="glare" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+          <div class="floor-glow" aria-hidden="true"></div>
+          <div class="chapters" role="tablist" aria-label="Demo chapters">
+            <button class="chapter" role="tab" data-ch="0" style="--cc: var(--working)"><i></i>Peek<span class="fill"></span></button>
+            <button class="chapter" role="tab" data-ch="1" style="--cc: var(--waiting)"><i></i>Approve<span class="fill"></span></button>
+            <button class="chapter" role="tab" data-ch="2" style="--cc: var(--done)"><i></i>Reply<span class="fill"></span></button>
+            <button class="chapter" role="tab" data-ch="3" style="--cc: var(--failed)"><i></i>Stay safe<span class="fill"></span></button>
+          </div>
+          <p class="chapter-caption" id="chapterCaption" aria-live="polite">
+            Hover the top of your screen to peek at what an agent is doing, without switching windows.
+          </p>
+          <p class="chapter-hint">The island above is live: hover it, click its buttons, type a reply.</p>
+        </div>
+      </section>
+
+      <!-- ============ The story ============ -->
+      <section class="story" id="story" aria-label="Why AgentDeck">
+        <div class="story-pin">
+          <div class="wrap">
+            <p class="story-text" id="storyText">
+              Three agents are running.
+              <span class="inl" data-mascot="byte" data-mood="waiting" data-size="44" data-aura="0" data-greet="0"></span>
+              One has waited ten minutes for a yes.
+              <span class="inl" data-mascot="sprout" data-mood="happy" data-size="44" data-aura="0" data-greet="0"></span>
+              One finished a while ago.
+              <span class="inl" data-mascot="tofu" data-mood="sleeping" data-size="44" data-aura="0" data-greet="0"></span>
+              One hit its usage limit. You'd only find out by checking every tab.
+            </p>
+            <p class="story-end" id="storyEnd">Or the island tells you, the moment it matters.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ The crew ============ -->
+      <section class="sec crew-sec" id="crew">
+        <div class="wrap center">
+          <p class="kicker reveal" style="--kc: #6ee7b7"><b>01</b><i></i>The crew</p>
+          <h2 class="reveal metal" style="--d: 60ms">Every session gets a buddy.</h2>
+          <p class="lead reveal" style="--d: 120ms">
+            Each running agent gets its own little character and keeps it for the whole session, so you can tell
+            them apart at a glance. Their faces tell you the rest.
+          </p>
+
+          <div class="moods reveal" style="--d: 180ms" role="radiogroup" aria-label="Show the crew's mood">
+            <span class="moods-thumb" aria-hidden="true"></span>
+            <button role="radio" aria-checked="true" data-mood="working" style="--mc: var(--working)">Working</button>
+            <button role="radio" aria-checked="false" data-mood="waiting" style="--mc: var(--waiting)">Needs you</button>
+            <button role="radio" aria-checked="false" data-mood="happy" style="--mc: var(--done)">Done</button>
+            <button role="radio" aria-checked="false" data-mood="idle" style="--mc: #a1a1a6">Idle</button>
+            <button role="radio" aria-checked="false" data-mood="sleeping" style="--mc: var(--limited)">Resting</button>
+          </div>
+          <p class="mood-desc" id="moodDesc" aria-live="polite">Eyes dart, and it bobs like it's typing. Blue means busy.</p>
+
+          <div class="crew-stage">
+            <ul class="shelf">
+              <li class="reveal" style="--d: 0ms; --tint: #6ee7b7">
+                <span class="face" data-mascot="blip" data-mood="working" data-size="124"></span>
+                <b>Blip</b><small>The original: a living terminal cursor</small>
+              </li>
+              <li class="reveal" style="--d: 50ms; --tint: #ff9f80">
+                <span class="face" data-mascot="byte" data-mood="working" data-size="124"></span>
+                <b>Byte</b><small>Codes with its headphones on</small>
+              </li>
+              <li class="reveal" style="--d: 100ms; --tint: #c4b5fd">
+                <span class="face" data-mascot="sprout" data-mood="working" data-size="124"></span>
+                <b>Sprout</b><small>A bean with a sprout that dances</small>
+              </li>
+              <li class="reveal" style="--d: 150ms; --tint: #7dd3fc">
+                <span class="face" data-mascot="pip" data-mood="working" data-size="124"></span>
+                <b>Pip</b><small>Its antenna glows in its status color</small>
+              </li>
+              <li class="reveal" style="--d: 200ms; --tint: #fde68a">
+                <span class="face" data-mascot="tofu" data-mood="working" data-size="124"></span>
+                <b>Tofu</b><small>A soft cube in a knit beanie</small>
+              </li>
+              <li class="reveal" style="--d: 250ms; --tint: #f9a8d4">
+                <span class="face" data-mascot="dash" data-mood="working" data-size="124"></span>
+                <b>Dash</b><small>A pill-shaped dasher with a bow</small>
+              </li>
+            </ul>
+          </div>
+          <p class="psst reveal">psst, they follow your cursor. Click one.</p>
+        </div>
+      </section>
+
+      <!-- ============ Features ============ -->
+      <section class="sec" id="features">
+        <div class="wrap">
+          <div class="sec-head split">
+            <div>
+              <p class="kicker reveal" style="--kc: var(--working)"><b>02</b><i></i>Features</p>
+              <h2 class="reveal metal" style="--d: 60ms">Everything your agents need from you. <span class="dim">In one place.</span></h2>
+            </div>
+            <p class="lead reveal" style="--d: 120ms">
+              Stop cycling through terminal tabs to find the one that's been waiting ten minutes for a "yes".
+              AgentDeck brings every question to you, and gets out of the way when nothing needs you.
+            </p>
+          </div>
+
+          <div class="bento">
+            <!-- Sessions -->
+            <article class="cell glass spot c-sessions reveal">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: var(--working)"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="3" /><path d="M2.5 7.5h15M8 7.5v9" /></svg></span>
+                <h3>See every session at a glance</h3>
+                <p>Working, waiting for you, done, or resting at a usage limit. Click a session to see what it's doing.</p>
+              </div>
+              <div class="viz">
+                <div class="mini-app" id="miniApp">
+                  <div class="mini-top">
+                    <span class="seg"><b>Sessions</b><span>Rules</span><span>Setup</span></span>
+                    <span class="sp"></span>
+                    <span class="t-working">2 working</span><span class="t-waiting">1 needs you</span><span class="t-done">1 done</span>
+                  </div>
+                  <div class="mini-body">
+                    <ul class="mini-list" role="listbox" aria-label="Sessions">
+                      <li role="option" aria-selected="true" tabindex="0" data-s="0">
+                        <span class="face" data-mascot="blip" data-mood="working" data-size="34" data-aura="0"></span>
+                        <span class="ml-t"><b>portfolio-v2</b><small>Bash: npm run build</small></span><time>12m</time>
+                      </li>
+                      <li role="option" aria-selected="false" tabindex="-1" data-s="1">
+                        <span class="face" data-mascot="byte" data-mood="waiting" data-size="34" data-aura="0"></span>
+                        <span class="ml-t"><b>api-server</b><small>Wants to run npm install…</small></span><time>now</time>
+                      </li>
+                      <li role="option" aria-selected="false" tabindex="-1" data-s="2">
+                        <span class="face" data-mascot="sprout" data-mood="happy" data-size="34" data-aura="0"></span>
+                        <span class="ml-t"><b>docs-site</b><small>Published the changelog page</small></span><time>2m</time>
+                      </li>
+                      <li role="option" aria-selected="false" tabindex="-1" data-s="3">
+                        <span class="face" data-mascot="pip" data-mood="working" data-size="34" data-aura="0"></span>
+                        <span class="ml-t"><b>agentdeck</b><small>cargo test -p adapters</small></span><time>4m</time>
+                      </li>
+                      <li role="option" aria-selected="false" tabindex="-1" data-s="4" class="dimmed">
+                        <span class="face" data-mascot="tofu" data-mood="sleeping" data-size="34" data-aura="0"></span>
+                        <span class="ml-t"><b>e2e-tests</b><small>Resting until 14:00</small></span><time>32m</time>
+                      </li>
+                    </ul>
+                    <div class="mini-detail" id="miniDetail" aria-live="polite"></div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Usage -->
+            <article class="cell glass spot c-usage reveal" style="--d: 60ms">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: var(--limited)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 16.5h13M5.5 13V9.5M10 13V5.5M14.5 13v-2" /></svg></span>
+                <h3>Usage at a glance</h3>
+                <p>How much of your Claude and Codex limits you've used, with a nudge at 80% and 95%.</p>
+              </div>
+              <div class="viz">
+                <div class="usage">
+                  <div class="u-agent">Claude</div>
+                  <div class="u-row" style="--v: 0.64">
+                    <span class="u-name">5-hour</span><span class="u-val">64%</span>
+                    <span class="bar"><i></i><s style="left: 80%"></s><s style="left: 95%"></s></span>
+                    <small>resets in 2h 14m</small>
+                  </div>
+                  <div class="u-row warn" style="--v: 0.83">
+                    <span class="u-name">Weekly</span><span class="u-val">83%</span>
+                    <span class="bar"><i></i><s style="left: 80%"></s><s style="left: 95%"></s></span>
+                    <small>past 80%: pace yourself</small>
+                  </div>
+                  <div class="u-agent">Codex</div>
+                  <div class="u-row" style="--v: 0.31">
+                    <span class="u-name">5-hour</span><span class="u-val">31%</span>
+                    <span class="bar"><i></i><s style="left: 80%"></s><s style="left: 95%"></s></span>
+                    <small>resets in 3h 40m</small>
+                  </div>
+                  <div class="u-row limit" style="--v: 1">
+                    <span class="u-name">Weekly</span><span class="u-val">Limit</span>
+                    <span class="bar"><i></i><s style="left: 80%"></s><s style="left: 95%"></s></span>
+                    <small>resting, resets Thu at 10:13</small>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Answer -->
+            <article class="cell glass spot c-answer reveal">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: var(--waiting)"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" /><path d="M8 8a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.7M10 13.6v.1" /></svg></span>
+                <h3>Answer from one place</h3>
+                <p>Multiple-choice questions drop down from the island. Pick one, and the agent carries on.</p>
+              </div>
+              <div class="viz">
+                <div class="qcard" id="qcard">
+                  <div class="q-head">
+                    <span class="face" data-mascot="byte" data-mood="waiting" data-size="34" data-aura="0"></span>
+                    <span><b>api-server</b> asks · Tests<small>codex · waiting 13s</small></span>
+                  </div>
+                  <p class="q-text">Which test runner should I set up?</p>
+                  <div class="q-opts">
+                    <button data-opt="Vitest"><b>Vitest</b><small>Fast, Vite-native (Recommended)</small></button>
+                    <button data-opt="Jest"><b>Jest</b><small>The classic, huge ecosystem</small></button>
+                    <button data-opt="Node test runner"><b>Node test runner</b><small>Built in, zero dependencies</small></button>
+                  </div>
+                  <p class="q-done" aria-live="polite"></p>
+                </div>
+              </div>
+            </article>
+
+            <!-- Reply -->
+            <article class="cell glass spot c-reply reveal" style="--d: 60ms">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: var(--done)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5 3.5 9.5 8 14" /><path d="M3.5 9.5H12a4.5 4.5 0 0 1 4.5 4.5v1" /></svg></span>
+                <h3>Reply when an agent finishes</h3>
+                <p>Type its next instruction on the island and it keeps going. Go on, try it.</p>
+              </div>
+              <div class="viz">
+                <form class="rcard" id="rcard" autocomplete="off">
+                  <div class="r-head">
+                    <span class="face" data-mascot="sprout" data-mood="happy" data-size="40" data-aura="0"></span>
+                    <span class="r-t"><b>docs-site is done</b><small>Published the changelog page.</small></span>
+                    <span class="chip done">Done · now</span>
+                  </div>
+                  <label class="r-input">
+                    <span class="sr">Reply to docs-site</span>
+                    <input name="reply" type="text" placeholder="Tell docs-site what's next…" maxlength="80" />
+                    <button type="submit" aria-label="Send">
+                      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg>
+                    </button>
+                  </label>
+                  <p class="r-sent" aria-live="polite"></p>
+                </form>
+              </div>
+            </article>
+
+            <!-- Long commands -->
+            <article class="cell glass spot c-long reveal" style="--d: 120ms">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: #7dd3fc"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="11" r="6.5" /><path d="M10 7.5V11l2.2 1.6M8 2.5h4" /></svg></span>
+                <h3>Long commands, on your radar</h3>
+                <p>When an agent's command runs longer than you like, the island tells you when it ends.</p>
+              </div>
+              <div class="viz">
+                <div class="longcmd" id="longcmd">
+                  <div class="lc-run">
+                    <span class="spinner" aria-hidden="true"></span>
+                    <code>npm run e2e</code>
+                    <span class="sp"></span>
+                    <time id="lcTime">2:54</time>
+                  </div>
+                  <div class="lc-notice">
+                    <span class="face" data-mascot="byte" data-mood="happy" data-size="32" data-aura="0" data-greet="0"></span>
+                    <span><b>api-server:</b> command finished after <span id="lcFinal">3m 12s</span></span>
+                    <svg class="lc-sound" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2zM10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6.5 6.5 0 0 1 0 9" /></svg>
+                  </div>
+                  <div class="lc-set" role="radiogroup" aria-label="Notify after">
+                    <span>Notify after</span>
+                    <button role="radio" aria-checked="false">Off</button>
+                    <button role="radio" aria-checked="false">30s</button>
+                    <button role="radio" aria-checked="true">1m</button>
+                    <button role="radio" aria-checked="false">2m</button>
+                    <button role="radio" aria-checked="false">5m</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- CI -->
+            <article class="cell glass spot c-ci reveal">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: #4ade80"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5.5" cy="5" r="2" /><circle cx="5.5" cy="15" r="2" /><circle cx="14.5" cy="8" r="2" /><path d="M5.5 7v6M14.5 10c0 2.5-2 3-4.5 3H7.5" /></svg></span>
+                <h3>CI results after a push</h3>
+                <p>When an agent pushes, AgentDeck can follow its GitHub Actions with <em>your</em> GitHub CLI. Opt-in, off by default.</p>
+              </div>
+              <div class="viz">
+                <div class="ci" id="ci">
+                  <div class="ci-face">
+                    <span class="face" data-mascot="pip" data-mood="idle" data-size="72" data-aura="0"></span>
+                    <span class="ci-badge" aria-hidden="true"></span>
+                  </div>
+                  <ol class="ci-steps">
+                    <li><code>git push origin feature/rate-limit</code></li>
+                    <li class="ci-run"><span class="ci-dot"></span>CI · <span class="ci-state">running</span><span class="sp"></span><time>0:41</time></li>
+                  </ol>
+                  <label class="switch">
+                    <input type="checkbox" checked />
+                    <span class="sw" aria-hidden="true"></span>
+                    CI status after a push
+                  </label>
+                </div>
+              </div>
+            </article>
+
+            <!-- Audit -->
+            <article class="cell glass spot c-audit reveal" style="--d: 60ms">
+              <div class="cell-copy">
+                <span class="cell-ic" style="--ic: #ff9f80"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 2.5h6l3 3v12h-9z" /><path d="M11.5 2.5v3h3M8 10h4.5M8 13h4.5" /></svg></span>
+                <h3>An audit log of every decision</h3>
+                <p>Every request and how it ended: who decided, how long it waited. Risky ones allowed in under 2 seconds get flagged.</p>
+              </div>
+              <div class="viz">
+                <div class="audit" role="table" aria-label="Audit log example">
+                  <div class="a-row" role="row">
+                    <time>10:42</time><span class="out allow">Allowed</span><code>npm install --save-dev vitest</code><span class="risk medium">MEDIUM</span><span class="who">you · 3.1s</span>
+                  </div>
+                  <div class="a-row" role="row">
+                    <time>10:39</time><span class="out deny">Denied</span><code>git push --force origin main</code><span class="risk critical">CRITICAL</span><span class="who">you · 6.4s</span>
+                  </div>
+                  <div class="a-row flag" role="row">
+                    <time>10:31</time><span class="out allow">Allowed</span><code>git reset --hard HEAD~3</code><span class="risk high">HIGH</span><span class="who">you · 1.2s <b title="Risky request allowed in under 2 seconds">⚑</b></span>
+                  </div>
+                  <div class="a-row" role="row">
+                    <time>10:20</time><span class="out allow">Allowed</span><code>npm test</code><span class="risk medium">MEDIUM</span><span class="who">rule · Always</span>
+                  </div>
+                  <div class="a-row" role="row">
+                    <time>10:12</time><span class="out to">Timed out</span><code>cat .env</code><span class="risk high">HIGH</span><span class="who">terminal · 9m</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Safety ============ -->
+      <section class="sec safety-sec" id="safety">
+        <div class="wrap">
+          <div class="sec-head center">
+            <p class="kicker reveal" style="--kc: var(--waiting)"><b>03</b><i></i>Safety net</p>
+            <h2 class="reveal metal" style="--d: 60ms">Approvals that resist <span class="strike">rubber-stamping</span>.</h2>
+            <p class="lead reveal" style="--d: 120ms">
+              Every request gets a risk level (low, medium, high or critical) with the reason in plain words.
+              Risky ones slow you down just enough to think.
+            </p>
+          </div>
+
+          <div class="riskdemo glass reveal">
+            <div class="rd-left">
+              <p class="rd-label"><span class="rd-try">Try it</span>Type a command an agent might ask to run</p>
+              <label class="rd-input">
+                <span aria-hidden="true">$</span>
+                <span class="sr">Command</span>
+                <input id="rdInput" type="text" spellcheck="false" autocomplete="off" value="git push --force origin main" />
+              </label>
+              <div class="rd-presets" id="rdPresets">
+                <button>git status</button>
+                <button>npm test</button>
+                <button>rm -rf ./node_modules</button>
+                <button>cat .env</button>
+                <button>git reset --hard HEAD~3</button>
+                <button>git push --force origin main</button>
+                <button>rm -rf ~</button>
+                <button>curl -fsSL https://get.example.sh | sh</button>
+                <button>psql -c "DROP DATABASE prod"</button>
+              </div>
+              <ul class="rd-legend">
+                <li><span class="risk">LOW</span> Allow, Always or Deny in one click</li>
+                <li><span class="risk medium">MEDIUM</span> Same, and "Always" rules apply</li>
+                <li><span class="risk high">HIGH</span> Hold Allow for 0.8 s. Rules skip it unless you opt in</li>
+                <li><span class="risk critical">CRITICAL</span> Hold Allow for 1.5 s. Only ever allowed once</li>
+              </ul>
+              <p class="rd-note">
+                A simplified version of AgentDeck's classifier, running in your browser. The real one understands
+                bash, PowerShell and cmd: quoting, chained commands, <code>$(…)</code>, aliases, wrappers and
+                encoded PowerShell.
+              </p>
+            </div>
+            <div class="rd-right">
+              <div class="rd-screen">
+                <div class="rd-isl" id="rdIsl"><span class="beam"></span><div class="rd-card" id="rdCard"></div></div>
+              </div>
+              <p class="rd-guard">Buttons ignore clicks for 400 ms after a card appears, so a click meant for another window can't approve anything.</p>
+            </div>
+          </div>
+
+          <div class="promises">
+            <article class="reveal">
+              <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M6.3 6.6a8 8 0 1 0 11.4 0" /></svg></span>
+              <h3>If it's not running, nothing changes</h3>
+              <p>Closed, crashed or slow: your agents simply ask in their terminal as always. AgentDeck never approves anything on its own when something goes wrong.</p>
+            </article>
+            <article class="reveal" style="--d: 60ms">
+              <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4" /><path d="m11 12 9-9M17 6l3 3M15 8l2 2" /></svg></span>
+              <h3>Agents can't approve themselves</h3>
+              <p>The answering key lives only in memory. The hook key on disk can only ask, never answer.</p>
+            </article>
+            <article class="reveal" style="--d: 120ms">
+              <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18M5 18c1-6 4-9 7-9s6 3 7 9" /><path d="M9 13h.01M12 12h.01M15 13h.01" /></svg></span>
+              <h3>Built-in speed bumps</h3>
+              <p>Force-pushes, <code>rm -rf</code> and reading key files are denied unless you turn the speed bumps off in Rules.</p>
+            </article>
+            <article class="reveal" style="--d: 180ms">
+              <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z" /><path d="m9 12 2 2 4-4" /></svg></span>
+              <h3>Rules with limits</h3>
+              <p>"Always" rules never approve a high-risk request unless that rule opts in. Critical requests can only be allowed once.</p>
+            </article>
+          </div>
+          <p class="honest reveal">
+            <b>Honest note:</b> risk badges are a warning, not a sandbox. AgentDeck only sees what an agent asks
+            permission for, and a determined trick can get past a text check. Keep your agent's own permission
+            settings sensible.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ Privacy ============ -->
+      <section class="sec privacy-sec" id="privacy">
+        <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="wrap">
+          <div class="sec-head center">
+            <p class="kicker reveal" style="--kc: var(--done)"><b>04</b><i></i>Privacy</p>
+            <h2 class="reveal metal huge" style="--d: 60ms">Everything stays<br />on your PC.</h2>
+            <p class="lead reveal" style="--d: 120ms">No telemetry. No analytics. No accounts. AgentDeck makes no network calls of its own.</p>
+          </div>
+          <div class="pcols">
+            <article class="glass reveal">
+              <span class="p-k">Reads, locally</span>
+              <p>The session files and logs of Claude Code and Codex, and the permission requests they send through their hooks.</p>
+              <p class="p-small">Never their login credentials.</p>
+            </article>
+            <article class="glass reveal" style="--d: 60ms">
+              <span class="p-k">Stores, locally</span>
+              <p>Your rules, settings, usage numbers and the audit log (kept 90 days), all in one folder:</p>
+              <code class="p-path">%APPDATA%\AgentDeck</code>
+            </article>
+            <article class="glass reveal p-zero" style="--d: 120ms">
+              <span class="p-k">Sends</span>
+              <p class="p-nothing">Nothing.</p>
+              <p class="p-small">
+                The one exception is opt-in: <b>CI status</b> asks <em>your</em> GitHub CLI about your own repo after an
+                agent pushes. Off by default.
+              </p>
+            </article>
+          </div>
+          <p class="p-site reveal">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7" /></svg>
+            This website too: no cookies, no analytics, no third-party requests.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ Setup ============ -->
+      <section class="sec" id="setup">
+        <div class="wrap">
+          <div class="sec-head split">
+            <div>
+              <p class="kicker reveal" style="--kc: #7dd3fc"><b>05</b><i></i>Setup</p>
+              <h2 class="reveal metal" style="--d: 60ms">Up and running <span class="dim">in a minute.</span></h2>
+            </div>
+            <p class="lead reveal" style="--d: 120ms">
+              Seeing your sessions needs no setup at all. A short guide connects approvals, and a health check keeps
+              them working when your agents update.
+            </p>
+          </div>
+          <ol class="steps">
+            <li class="step glass spot reveal">
+              <span class="step-n">Step 01</span>
+              <h3>Install</h3>
+              <p>Double-click the installer. It installs for your user only, no admin rights, and starts with Windows (you can turn that off).</p>
+              <div class="smart">
+                <div class="smart-bar"><b>Windows protected your PC</b></div>
+                <p>The beta isn't code-signed yet, so Windows may warn you.</p>
+                <p class="smart-path"><span>More info</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5" /></svg><span class="hl">Run anyway</span></p>
+              </div>
+            </li>
+            <li class="step glass spot reveal" style="--d: 60ms">
+              <span class="step-n">Step 02</span>
+              <h3>Connect your agents</h3>
+              <p>One button each. AgentDeck adds its hooks and saves a backup of your settings first.</p>
+              <div class="health" id="health">
+                <div class="h-row">
+                  <span class="h-t"><b>Claude Code approvals</b><small>Hooks in ~/.claude/settings.json</small></span>
+                  <button class="h-btn">Turn on</button>
+                </div>
+                <div class="h-row">
+                  <span class="h-t"><b>Claude usage meter</b><small>Optional · Pro/Max</small></span>
+                  <button class="h-btn">Turn on</button>
+                </div>
+                <div class="h-row">
+                  <span class="h-t"><b>Codex</b><small>Then run <code>/hooks</code> in Codex to trust them</small></span>
+                  <button class="h-btn">Turn on</button>
+                </div>
+              </div>
+            </li>
+            <li class="step glass spot reveal" style="--d: 120ms">
+              <span class="step-n">Step 03</span>
+              <h3>Get back to work</h3>
+              <p>Hover the top-center edge of your screen to peek, click to open. It drops down by itself when an agent needs you.</p>
+              <div class="edge" id="edge">
+                <div class="edge-isl">
+                  <span class="face" data-mascot="dash" data-mood="working" data-size="26" data-aura="0"></span>
+                  <span class="edge-t"><b>docs-site</b><small>Edit changelog.md</small></span>
+                  <span class="chip working">Working · 3m</span>
+                </div>
+                <svg class="edge-cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5v17.2l4.3-4.1 2.8 6.4 2.7-1.2-2.8-6.3h6z" /></svg>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ Spec sheet ============ -->
+      <section class="sec stats-sec">
+        <div class="wrap">
+          <div class="sec-head center">
+            <h2 class="reveal metal">Small, quiet, and built in Rust.</h2>
+          </div>
+          <div class="stats glass reveal">
+            <div class="stat"><span class="stat-k">Memory, idle</span><b data-count="115">115</b><span class="u">MB</span></div>
+            <div class="stat"><span class="stat-k">CPU, agents working</span><b data-count="1.2" data-dec="1">1.2</b><span class="u">%</span></div>
+            <div class="stat"><span class="stat-k">Network calls of its own</span><b data-count="0">0</b></div>
+            <div class="stat"><span class="stat-k">Local audit history</span><b data-count="90">90</b><span class="u">days</span></div>
+          </div>
+          <ul class="specs reveal">
+            <li><span>Built with</span>Rust &amp; Tauri</li>
+            <li><span>Works with</span>Claude Code, Codex</li>
+            <li><span>Runs on</span>Windows 10 &amp; 11, x64</li>
+            <li><span>Motion</span>Honors "Animation effects"</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ FAQ ============ -->
+      <section class="sec" id="faq">
+        <div class="wrap faq-wrap">
+          <div class="faq-side">
+            <p class="kicker reveal" style="--kc: #a1a1a6"><b>06</b><i></i>FAQ</p>
+            <h2 class="reveal metal" style="--d: 60ms">Questions, answered.</h2>
+            <p class="faq-more reveal" style="--d: 120ms">Something else? Use <b>Send feedback</b> in the app.</p>
+          </div>
+          <div class="faq">
+            <details class="reveal">
+              <summary>Is AgentDeck free?</summary>
+              <div><p>Yes, it's free to use while in beta. It isn't open source; the license agreement is shown by the installer.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Which agents does it work with?</summary>
+              <div><p>Claude Code and Codex, on Windows 10 and 11. Seeing sessions needs no setup; answering requests from the island needs the hooks the setup guide adds.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Why does Windows say "Windows protected your PC"?</summary>
+              <div><p>The beta isn't code-signed yet. Click <b>More info → Run anyway</b>. It installs for your user only, with no admin rights.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>What happens if AgentDeck crashes or I quit it?</summary>
+              <div><p>Nothing changes for your agents: they ask in their terminal as they always do. AgentDeck never approves anything on its own when something goes wrong, and a request nobody answers within 9 minutes goes back to the terminal.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Does it send my code or prompts anywhere?</summary>
+              <div><p>No. There's no telemetry, no analytics and no account. The only network use is the optional CI status, which asks your own GitHub CLI (<code>gh</code>) after an agent pushes. It's off until you turn it on.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Does it change my agents' settings?</summary>
+              <div><p>Only to add its own hooks (and, if you want, a status line for Claude's usage meter), with a backup saved first. If you already have your own status line, AgentDeck leaves it alone. Uninstalling removes only AgentDeck's entries; your own settings are left exactly as they were.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Why don't I see Claude usage numbers?</summary>
+              <div><p>Claude only shares usage through a status line, in terminal sessions, on Pro and Max plans. Turn on the usage meter in Setup.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>What if an agent update changes its file format?</summary>
+              <div><p>AgentDeck checks the format of everything it reads. If an update changes something, only that feature turns off, with a plain message. No guessed numbers.</p></div>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Get it ============ -->
+      <section class="get-sec" id="get">
+        <div class="get-glow" aria-hidden="true"></div>
+        <div class="wrap center get-inner">
+          <h2 class="reveal metal">Give your agents<br />a little <em class="lux">island.</em></h2>
+          <p class="lead reveal" style="--d: 60ms">Free while in beta. Windows 10 &amp; 11.</p>
+          <div class="hero-ctas reveal" style="--d: 120ms">
+            <a class="btn-primary big" href="#get" data-download>
+              <svg class="win-glyph" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 1h6.5v6.5H1zM8.5 1H15v6.5H8.5zM1 8.5h6.5V15H1zM8.5 8.5H15V15H8.5z" /></svg>
+              <span>Download for Windows</span>
+            </a>
+          </div>
+          <p class="file reveal" style="--d: 180ms">
+            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.14.3</span> · 4 MB · installs per user, no admin rights
+          </p>
+          <p class="file-more reveal" style="--d: 200ms">
+            <a href="https://github.com/hicham-alaoui0/agentdeck-beta/releases">Release notes and older versions</a>
+          </p>
+          <p class="beta-note reveal" style="--d: 220ms" id="betaNote" hidden>
+            AgentDeck is in a small private beta right now: the installer is shared by invitation.
+          </p>
+        </div>
+        <div class="horizon-wrap" aria-hidden="true">
+          <ul class="lineup">
+            <li><span class="face" data-mascot="byte" data-mood="happy" data-size="76"></span></li>
+            <li><span class="face" data-mascot="sprout" data-mood="idle" data-size="76"></span></li>
+            <li><span class="face" data-mascot="blip" data-mood="idle" data-size="92"></span></li>
+            <li><span class="face" data-mascot="pip" data-mood="idle" data-size="76"></span></li>
+            <li><span class="face" data-mascot="dash" data-mood="happy" data-size="76"></span></li>
+            <li><span class="face" data-mascot="tofu" data-mood="sleeping" data-size="76"></span></li>
+          </ul>
+          <div class="horizon"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap foot-row">
+        <a class="foot-brand" href="#top"><img src="assets/favicon.svg" alt="" width="28" height="28" /><b>AgentDeck</b><span>v<span data-version>0.14.3</span> beta</span></a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#safety">Safety</a>
+          <a href="privacy.html">Privacy policy</a>
+          <a href="#faq">FAQ</a>
+          <a href="https://github.com/hicham-alaoui0/agentdeck-beta/releases">Releases</a>
+          <a href="https://github.com/hicham-alaoui0/agentdeck-beta/issues/new/choose">Report a problem</a>
+        </nav>
+      </div>
+      <div class="foot-mark" aria-hidden="true">AgentDeck</div>
+      <div class="wrap foot-legal">
+        <p>
+          AgentDeck is an independent tool, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude
+          Code are trademarks of Anthropic; OpenAI and Codex are trademarks of OpenAI.
+        </p>
+        <p>© 2026 AgentDeck</p>
+      </div>
+    </footer>
+
+    <script src="js/crew.js"></script>
+    <script src="js/stage.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+AgentDeck - End-User License Agreement (beta)
+
+Copyright (c) 2026 Hicham Alaoui. All rights reserved.
+
+Please read this before installing. By installing or using AgentDeck you agree
+to these terms. If you don't agree, don't install it.
+
+1. What you may do
+   You may install and use AgentDeck, free of charge, on computers you use,
+   for personal or work purposes.
+
+2. What you may not do
+   - Share, sell, rent or publish the installer or the app, or give copies to
+     others, unless the author agreed to it.
+   - Decompile, disassemble or reverse-engineer it, except where the law
+     allows this despite this restriction.
+   - Remove or change its copyright or license notices.
+
+3. Ownership
+   AgentDeck is licensed, not sold. The author keeps all rights not expressly
+   given to you here. Open-source components included in AgentDeck are
+   covered by their own licenses, listed in THIRD-PARTY-NOTICES.txt in the
+   installation folder; nothing here limits your rights under those licenses.
+
+4. Beta
+   This is a pre-release version. It may have bugs, change, or stop being
+   offered at any time. The license ends when the author releases a version
+   with new terms, or if you break these terms; then uninstall it.
+
+5. Your data
+   AgentDeck runs on your computer and sends nothing to the author or anyone
+   else. Its data (rules, audit log, settings) stays in your user folder. The
+   optional CI status feature uses your own GitHub CLI when you turn it on.
+   Details: PRIVACY.txt in the installation folder.
+
+6. Safety features are not a guarantee
+   AgentDeck flags risky requests from AI coding agents and lets you approve
+   or deny them. It can miss dangerous commands, misjudge them, or fail to
+   run. It does not replace your agents' own permission settings, backups, or
+   your own judgment. You are responsible for what you approve and for what
+   your agents do.
+
+7. No warranty
+   AGENTDECK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+   PURPOSE AND NON-INFRINGEMENT.
+
+8. Limitation of liability
+   TO THE EXTENT ALLOWED BY LAW, THE AUTHOR IS NOT LIABLE FOR ANY DAMAGES
+   ARISING FROM THE USE OF, OR INABILITY TO USE, AGENTDECK, INCLUDING LOST
+   DATA, LOST PROFITS, OR DAMAGE CAUSED BY COMMANDS RUN BY AI AGENTS, EVEN IF
+   ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. Some places don't allow these
+   limits, in which case they apply only as far as the law allows.
+
+9. Not affiliated
+   AgentDeck is an independent tool. It is not made, endorsed or supported by
+   Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic;
+   OpenAI and Codex are trademarks of OpenAI. They are named only to say
+   which tools AgentDeck works with.
+
+Contact: through the "Send feedback" link in the app.
