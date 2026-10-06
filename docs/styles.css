@@ -1202,6 +1202,9 @@ h2.metal .dim {
 .ln .no {
   color: #ff7b72;
 }
+.ln .lim {
+  color: #c99bff;
+}
 .ln .wt {
   color: #ffb340;
   animation: pulse 1.2s ease-in-out infinite;
@@ -4390,11 +4393,16 @@ h2.metal .dim {
     flex-wrap: nowrap;
     gap: 2px;
   }
+  /* Five tabs on a phone: no dots (the active tab's fill carries the color). */
   .chapter {
+    flex: none;
     height: 36px;
-    gap: 7px;
-    padding: 0 11px 0 10px;
+    padding: 0 10px;
     font-size: 13px;
+    white-space: nowrap;
+  }
+  .chapter i {
+    display: none;
   }
   .chapter .fill {
     left: 10px;
@@ -4605,5 +4613,16 @@ h2.metal .dim {
 @keyframes fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .chapter {
+    padding: 0 8px;
+    font-size: 12.5px;
+  }
+  .chapter .fill {
+    left: 8px;
+    right: 8px;
   }
 }

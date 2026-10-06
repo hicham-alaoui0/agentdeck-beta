@@ -1,5 +1,5 @@
 // The hero demo: a desktop with three agents at work and the island on top.
-// A timeline plays four chapters (peek, approve, reply, stay safe) with a
+// A timeline plays five chapters (peek, approve, reply, stay safe, limit) with a
 // scripted cursor; visitors can take over at any point: hover the island,
 // click its buttons, hold to allow, type a reply.
 (function () {
@@ -113,7 +113,7 @@
   const active = () => onScreen && flat && document.visibilityState === "visible";
 
   // The active chapter tab fills up as its chapter plays (estimated lengths, ms).
-  const LENGTH = [7600, 9400, 11800, 10200];
+  const LENGTH = [7600, 9400, 11800, 10200, 15600];
   let chapterAt = 0;
   let chapterSpent = 0;
   function spend(dt) {
@@ -206,14 +206,14 @@
   ];
   // What each terminal shows when a chapter starts.
   const SNAP = {
-    a: [A0, A0, A0, A0],
-    b: [B0, B0, B0.concat(B1), B0.concat(B1)],
-    c: [C0, C0, C0, C0.concat(C2)],
+    a: [A0, A0, A0, A0, A0],
+    b: [B0, B0, B0.concat(B1), B0.concat(B1), B0.concat(B1)],
+    c: [C0, C0, C0, C0.concat(C2), C0.concat(C2)],
   };
   const TAB = {
-    a: ["working", "working", "working", "working"],
-    b: ["working", "working", "working", "working"],
-    c: ["working", "working", "working", "working"],
+    a: ["working", "working", "working", "working", "working"],
+    b: ["working", "working", "working", "working", "working"],
+    c: ["working", "working", "working", "working", "working"],
   };
 
   const line = ([cls, html], fresh) => {
@@ -257,19 +257,33 @@
   const ringed = (who, mood, size, beamColor) =>
     `<span class="ring" style="--ring:${RING[mood]}">${beamColor ? `<span class="beam" style="--beam-color:${beamColor}"></span>` : ""}${face(who, mood, size)}</span>`;
 
+  // While a usage limit counts down (app: the violet "Claude limit · 2h 31m" pill).
+  let limitLeft = "";
   function compactHTML(m) {
     const faces = ["a", "b", "c"].map((k) => face(S[k].who, m[k], 26, 'data-greet="0"')).join("");
     const n = (mood) => Object.values(m).filter((x) => x === mood).length;
     const parts = [];
+    if (n("sleeping")) parts.push(`<span style="color:var(--limited)">Claude limit · <span class="i-left">${limitLeft}</span></span>`);
     if (n("waiting")) parts.push(`<span style="color:#ffb340">${n("waiting")} needs you</span>`);
     if (n("happy")) parts.push(`<span style="color:#4ade80">${n("happy")} done</span>`);
     if (n("working")) parts.push(`${n("working")} working`);
-    return `<div class="i-compact"><span class="i-faces">${faces}</span><span>${parts.join(" · ")}</span><i class="pip ${n("waiting") ? "waiting" : "working"}"></i></div>`;
+    const pip = n("waiting") ? "waiting" : n("working") ? "working" : "sleeping";
+    return `<div class="i-compact"><span class="i-faces">${faces}</span><span>${parts.join(" · ")}</span><i class="pip ${pip}"></i></div>`;
   }
   function peekHTML(k, mood = "working") {
     const x = S[k];
-    const chip = mood === "waiting" ? `<span class="chip waiting">Needs you</span>` : mood === "happy" ? `<span class="chip done">Done · now</span>` : `<span class="chip working">Working · ${x.age}</span>`;
-    return `<div class="i-peek">${face(x.who, mood, 44)}<span class="i-t"><b>${x.title}</b><small>${esc(x.doing)}</small></span>${chip}</div>`;
+    const chip =
+      mood === "waiting"
+        ? `<span class="chip waiting">Needs you</span>`
+        : mood === "happy"
+          ? `<span class="chip done">Done · now</span>`
+          : mood === "sleeping"
+            ? `<span class="chip limited">Limit · ${limitLeft}</span>`
+            : `<span class="chip working">Working · ${x.age}</span>`;
+    return noticeHTML(k, mood, x.title, x.doing, chip);
+  }
+  function noticeHTML(k, mood, title, sub, chip) {
+    return `<div class="i-peek">${face(S[k].who, mood, 44)}<span class="i-t"><b>${esc(title)}</b><small>${esc(sub)}</small></span>${chip}</div>`;
   }
   function askHTML(k, cmd, risk, reason) {
     const x = S[k];
@@ -354,7 +368,7 @@
   });
   isl.addEventListener("pointerenter", (e) => {
     if (e.pointerType !== "mouse" || phase !== "compact") return;
-    const k = Object.keys(moods).find((x) => moods[x] === "waiting") || Object.keys(moods).find((x) => moods[x] === "happy") || "a";
+    const k = ["waiting", "happy", "sleeping"].map((m) => Object.keys(moods).find((x) => moods[x] === m)).find(Boolean) || "a";
     setIsland("peek", peekHTML(k, moods[k]), { width: W.peek() });
     phase = "userpeek";
   });
@@ -496,6 +510,7 @@
     "An agent asks permission and the island drops down. Allow, deny, or make it a rule, from wherever you are.",
     "An agent finishes. Tell it what's next right on the island, and it keeps going.",
     "Risky requests are flagged with a reason. Critical ones need a deliberate hold to allow.",
+    "An agent hits its usage limit. The island says when it resets, counts down (sped up here), and tells you the moment you can continue.",
   ];
   function setChapter(i) {
     chips.forEach((c, j) => {
@@ -630,9 +645,58 @@
     await wait(2600);
   }
 
-  const CHAPTERS = [peek, approve, reply, safe];
+  async function limit() {
+    setChapter(4);
+    await wait(700);
+    push("c", t("Bash", "cargo test --workspace"));
+    await wait(800);
+    push("c", r(`<span class="lim">5-hour limit reached ∙ resets 2pm</span>`));
+    tab("c", "sleeping");
+    moods.c = "sleeping";
+    limitLeft = "2h 31m";
+    S.c.doing = "Resets 2:00 PM · in 2h 31m";
+    await wait(500);
+    setIsland("peek", noticeHTML("c", "sleeping", "Claude usage limit reached", S.c.doing, `<span class="chip limited">Limit · 2h 31m</span>`), {
+      width: W.peek(),
+    });
+    phase = "notice";
+    nudge();
+    await wait(3600);
+    compact();
+    await wait(1600);
+    // Time-lapse to the reset, ticking in place (no re-render, no flicker).
+    for (const left of ["1h 48m", "1h 02m", "24m", "6m", "1m"]) {
+      limitLeft = left;
+      S.c.doing = `Resets 2:00 PM · in ${left}`;
+      const el = isl.querySelector(".isl-c:not(.out) .i-left");
+      if (el) el.textContent = left;
+      await wait(reduced ? 300 : 560);
+    }
+    limitLeft = "";
+    moods.c = "happy";
+    tab("c", "done");
+    S.c.doing = "Limit reset";
+    setIsland(
+      "peek",
+      noticeHTML("c", "happy", "Limit reset · you can continue", "Your Claude sessions can work again", `<span class="chip done">Done · now</span>`),
+      { width: W.peek() },
+    );
+    phase = "notice";
+    await wait(3200);
+    push("c", u("continue"));
+    moods.c = "working";
+    tab("c", "working");
+    S.c.doing = "Bash: cargo test --workspace";
+    await wait(600);
+    push("c", t("Bash", "cargo test --workspace"));
+    compact();
+    await wait(2200);
+  }
+
+  const CHAPTERS = [peek, approve, reply, safe, limit];
 
   function resetStory(ch) {
+    limitLeft = "";
     S.a.doing = "Bash: npm run build";
     S.b.doing = ch >= 2 ? "Wrote tests/rateLimit.test.ts" : "Edited src/routes/auth.ts";
     S.c.doing = ch >= 3 ? "Edit Cargo.toml" : "Bash: cargo test -p adapters";
