@@ -253,6 +253,11 @@ h2.metal .dim {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+/* The glow lives on a wrapper: Safari (every iPhone browser) renders a filter
+   on a background-clip:text element as a blurred box instead of the word. */
+.lux-glow {
+  display: inline-block;
   filter: drop-shadow(0 0 28px rgba(125, 211, 252, 0.28));
 }
 .kicker {
@@ -937,7 +942,7 @@ h2.metal .dim {
   animation: word-in 1.2s var(--ease-out) forwards;
   animation-delay: calc(var(--i, 0) * 75ms + 60ms);
 }
-.js .hero-title.lux-wait .lux {
+.js .hero-title.lux-wait .lux-glow {
   animation-delay: calc(var(--i, 0) * 75ms + 160ms);
 }
 @keyframes word-in {
@@ -947,10 +952,10 @@ h2.metal .dim {
     filter: blur(0);
   }
 }
-.hero-title .lux {
+.hero-title .lux-glow {
   filter: drop-shadow(0 0 30px rgba(125, 211, 252, 0.3));
 }
-.js .hero-title .lux {
+.js .hero-title .lux-glow {
   animation-name: word-in-lux;
 }
 @keyframes word-in-lux {
@@ -4521,8 +4526,8 @@ h2.metal .dim {
     filter: none;
     animation: fade-in 0.6s ease forwards;
   }
-  .hero-title .lux,
-  .js .hero-title .lux {
+  .hero-title .lux-glow,
+  .js .hero-title .lux-glow {
     filter: drop-shadow(0 0 30px rgba(125, 211, 252, 0.3));
   }
   .hero-light,

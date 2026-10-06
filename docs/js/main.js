@@ -23,8 +23,10 @@
     let i = 0;
     title.querySelectorAll(".metal, .lux").forEach((part) => {
       if (part.classList.contains("lux")) {
-        part.classList.add("w");
-        part.style.setProperty("--i", i++);
+        // Animate (and glow) the wrapper, never the clipped text itself.
+        const host = part.closest(".lux-glow") || part;
+        host.classList.add("w");
+        host.style.setProperty("--i", i++);
         return;
       }
       const words = part.textContent.trim().split(/\s+/);
