@@ -3,9 +3,12 @@
 // library, nothing loaded from elsewhere), so it stays a few KB.
 //
 // What it does:
-// - follows you: it sits in the corner and reacts to the section you're in
-//   (waves on the hero, types during the demo, gets alert on safety, closes
-//   its eyes on privacy, cheers at the download);
+// - follows you: it flies to a perch next to what each section is about
+//   (beside the hero's buttons, on the demo window, at the end of the crew's
+//   row, next to the Download button) and floats in the corner in between,
+//   trailing behind as you scroll; it reacts to the section (waves on the
+//   hero, types during the demo, gets alert on safety, closes its eyes on
+//   privacy, cheers at the download);
 // - its rim light is its status color, like the colored outline in the app;
 // - head and eyes follow your cursor; it leans when you scroll fast;
 // - click it: squish, jump, spin; hover a Download button: it gets excited;
@@ -25,19 +28,28 @@
     sleeping: [0.75, 0.35, 0.95],
   };
 
-  // Where you are → how Blip feels and what it says (once per visit and section).
+  // Where you are → how Blip feels, what it says (once per visit and section)
+  // and where it perches: `beside` an element (standing on its baseline),
+  // `after-text` (beside the text itself, for centered lines in wide boxes) or
+  // `on` its top edge, near the right corner; the first spot that fits on
+  // screen wins. None fits: the corner.
   const SECTIONS = {
-    top: { mood: "idle", wave: true, line: "Hi! I'm Blip. I'll tag along." },
-    how: { mood: "working", line: "That island up there is live. Hover it!" },
+    top: { mood: "idle", wave: true, line: "Hi! I'm Blip. I'll tag along.", perch: [[".hero .hero-ctas > :last-child", "beside"]] },
+    how: { mood: "working", line: "That island up there is live. Hover it!", perch: [["#stage", "on"]] },
     story: { mood: "waiting", line: "Which terminal was it again…?" },
-    crew: { mood: "happy", line: "Those are my friends!" },
+    // At the crew it stands by the mood picker and copies the mood you pick.
+    crew: { mood: "happy", line: "Those are my friends! Pick a mood, I'll do it too.", mirror: ".moods", perch: [[".crew-sec .moods", "beside"], [".crew-sec .psst", "after-text"]] },
     features: { mood: "working", line: "Approve, answer, reply. All from up top." },
-    safety: { mood: "waiting", line: "Risky commands? I flag them." },
+    safety: { mood: "waiting", line: "Risky commands? I flag them.", perch: [[".riskdemo", "on"]] },
     privacy: { mood: "idle", shy: true, line: "I'm not looking. Nothing leaves your PC." },
     setup: { mood: "working", line: "One minute, promise." },
     faq: { mood: "idle", line: "Ask away." },
-    get: { mood: "happy", wave: true, line: "Ready? Take me home!" },
+    get: { mood: "happy", wave: true, line: "Ready? Take me home!", perch: [["#get .hero-ctas > :last-child", "beside"]] },
   };
+  /** Feet height inside the canvas, as a share of its height (from the shader's camera). */
+  const FEET = 0.06;
+  /** Narrower than this, Blip stays in the corner (no room beside things). */
+  const PERCH_MIN_WIDTH = 900;
   const CLICK_LINES = ["Boing!", "Hey, that tickles.", "I run on hooks and good vibes.", "Psst: there's a 2D me in the app.", "Wheee!"];
 
   // ---------- DOM ----------
@@ -105,14 +117,19 @@
     excitedUntil: 0,
   };
   const target = { yaw: 0, pitch: 0, roll: 0 };
+  // Where Blip is on screen (top-left of its box) and how fast it's flying.
+  const pos = { x: -1, y: -1, vx: 0, vy: 0, flying: false };
   let lastInput = performance.now();
   let asleep = false;
   let sectionMood = SECTIONS.top;
 
+  /** The mood picked in a section's mood picker (the crew's), if it has one. */
+  const mirrored = (sec) => (sec.mirror && document.querySelector(`${sec.mirror} [aria-checked="true"]`)?.dataset.mood) || null;
+
   function setMood(sec) {
     sectionMood = sec;
     if (!asleep) {
-      s.mood = sec.mood;
+      s.mood = mirrored(sec) || sec.mood;
       s.shy = !!sec.shy;
     }
     // Without WebGL: the 2D Blip shows the mood.
@@ -338,7 +355,7 @@ void main() {
     lastInput = performance.now();
     if (asleep) {
       asleep = false;
-      s.mood = sectionMood.mood;
+      s.mood = mirrored(sectionMood) || sectionMood.mood;
       s.shy = !!sectionMood.shy;
       hop(1.2);
       say("Huh? I'm up, I'm up!");
@@ -364,6 +381,13 @@ void main() {
       say("That's the one!", 2200);
       kick();
     }),
+  );
+
+  // Picking a mood for the crew: Blip joins in.
+  document.querySelectorAll(".moods").forEach((picker) =>
+    new MutationObserver(() => {
+      if (sectionMood.mirror && !asleep) setMood(sectionMood);
+    }).observe(picker, { subtree: true, attributes: true, attributeFilter: ["aria-checked"] }),
   );
 
   // Sections: the one crossing the middle of the screen sets the mood.
@@ -400,6 +424,29 @@ void main() {
 
   const approach = (v, t, k, dt) => v + (t - v) * (1 - Math.exp(-k * dt));
 
+  /** Where Blip wants to be now: its section's perch if it's on screen, else the corner. */
+  function perchTarget(w, h) {
+    const vw = innerWidth, vh = innerHeight;
+    const corner = { x: vw - w - 12, y: vh - h + h * FEET - 10 };
+    if (!sectionMood.perch || vw < PERCH_MIN_WIDTH || asleep) return corner;
+    for (const [sel, mode] of sectionMood.perch) {
+      const el = document.querySelector(sel);
+      if (!el) continue;
+      let r = el.getBoundingClientRect();
+      if (mode === "after-text") {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        r = range.getBoundingClientRect();
+      }
+      const x = mode === "on" ? r.right - w - 18 : r.right + 10;
+      const floor = mode === "on" ? r.top + 2 : r.bottom + 4;
+      const y = floor - h + h * FEET;
+      // Only where Blip fits on screen (below the nav).
+      if (x >= 8 && x <= vw - w - 8 && y >= 64 && y <= vh - h - 4) return { x, y };
+    }
+    return corner;
+  }
+
   function frame(now) {
     raf = 0;
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -430,7 +477,6 @@ void main() {
     target.roll = reduced ? 0 : Math.max(-0.3, Math.min(0.3, -scrollV * 0.004));
     s.yaw = approach(s.yaw, target.yaw, 6, dt);
     s.pitch = approach(s.pitch, target.pitch, 6, dt);
-    s.roll = approach(s.roll, target.roll, 8, dt);
     s.lookX = approach(s.lookX, target.yaw / 0.6, 12, dt);
     s.lookY = approach(s.lookY, -target.pitch / 0.35, 12, dt);
     s.spin = approach(s.spin, 0, 5, dt);
@@ -447,6 +493,30 @@ void main() {
     }
     s.squashV += ((1 - s.squash) * 180 - s.squashV * 14) * dt;
     s.squash += s.squashV * dt;
+
+    // Fly toward the perch: a spring, so it trails behind while you scroll.
+    const box = root.getBoundingClientRect();
+    const goal = perchTarget(box.width, box.height);
+    if (pos.x < 0 || reduced) {
+      pos.x = goal.x;
+      pos.y = goal.y;
+    } else {
+      const k = 55, damp = 2 * Math.sqrt(k);
+      pos.vx += ((goal.x - pos.x) * k - pos.vx * damp) * dt;
+      pos.vy += ((goal.y - pos.y) * k - pos.vy * damp) * dt;
+      pos.x += pos.vx * dt;
+      pos.y += pos.vy * dt;
+    }
+    const speed = Math.hypot(pos.vx, pos.vy);
+    if (speed > 260) pos.flying = true;
+    else if (pos.flying && speed < 60) {
+      pos.flying = false;
+      s.squash = Math.min(s.squash, 0.8); // landed
+    }
+    root.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0)`;
+    root.classList.toggle("left", pos.x + box.width / 2 < 260);
+    if (!reduced) target.roll += Math.max(-0.35, Math.min(0.35, -pos.vx * 0.0009));
+    s.roll = approach(s.roll, target.roll, 8, dt);
 
     // Mood-driven pose.
     let bob = 0, armL = 0.35, armR = 0.35, eyeBig = 1, mouth = 0, breathe = 0;
@@ -476,6 +546,10 @@ void main() {
     if (s.shy) {
       // Privacy: hands up, eyes shut.
       armL = armR = 2.75;
+    }
+    if (pos.flying) {
+      // Arms out like wings while it flies over.
+      armL = armR = 1.75 + Math.sin(time * 16) * 0.35;
     }
     s.armL = approach(s.armL, armL, 14, dt);
     s.armR = approach(s.armR, armR, 14, dt);
