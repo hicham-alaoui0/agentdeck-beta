@@ -18,6 +18,11 @@
 //   while you hold "Hold to allow" (thumbs up when you get there);
 // - now and then a friend from the crew flies by to say hi;
 // - select some text and it hops onto your selection;
+// - it's a guide: much of this page is live demos that look like pictures, so
+//   when you linger in a section without trying anything, Blip flies next to
+//   something you can use, points at it and rings it ("Type any command
+//   here"). Once you've used a thing, it stops hinting at it. Click Blip for
+//   the next tip in the section;
 // - secret: type "blip" or click it 5 times.
 // Honors "reduce motion" (holds still), hides with ×, falls back to the 2D
 // Blip without WebGL. Renders only while visible.
@@ -40,7 +45,7 @@
   // `on` its top edge, near the right corner; the first spot that fits on
   // screen wins. None fits: the corner.
   const SECTIONS = {
-    top: { mood: "idle", wave: true, line: "Hi! I'm Blip. I'll tag along.", perch: [[".hero .hero-ctas > :last-child", "beside"]] },
+    top: { mood: "idle", wave: true, line: "Hi! I'm Blip. Click me any time for tips.", perch: [[".hero .hero-ctas > :last-child", "beside"]] },
     how: { mood: "working", line: "That island up there is live. Hover it!", perch: [["#stage", "on"]] },
     story: { mood: "waiting", line: "Which terminal was it again…?" },
     // At the crew it stands by the mood picker and copies the mood you pick.
@@ -52,6 +57,43 @@
     faq: { mood: "idle", line: "Ask away." },
     get: { mood: "happy", wave: true, line: "Ready? Take me home!", perch: [["#get .hero-ctas > :last-child", "beside"]] },
   };
+  // What you can try, per section: Blip points these out (see the guide below).
+  const TIPS = {
+    top: [
+      { sel: "#isl", text: "That island in the demo is live. Hover it!" },
+      { sel: ".chapters", text: "Jump to any part of the story here." },
+    ],
+    how: [
+      { sel: "#isl", text: "This island is live: hover it, click its buttons." },
+      { sel: ".chapters", text: "Jump to any part of the story here." },
+    ],
+    crew: [
+      { sel: ".crew-sec .moods", text: "Pick a mood: we all change. Me too." },
+      { sel: ".crew-sec .shelf", text: "Click one of us. We follow your cursor too." },
+    ],
+    features: [
+      { sel: "#miniApp", text: "Click a session to see what it's doing." },
+      { sel: "#qcard .q-opts", text: "Pick an answer, like you would on the island." },
+      { sel: "#rcard .r-input", text: "Type a reply and press Enter." },
+      { sel: "#longcmd .lc-set", text: "Choose when you want to be told." },
+      { sel: "#ci .switch", text: "Flip this on and off." },
+    ],
+    safety: [
+      { sel: ".rd-input", text: "Type any command here. I'll tell you how risky it is." },
+      { sel: "#rdPresets", text: "Or try one of these." },
+      { sel: "#rdCard .hold", text: "Risky ones need a hold. Press and hold this." },
+    ],
+    setup: [{ sel: "#health", text: "Go on, turn one on." }],
+    faq: [{ sel: ".faq details", text: "Click a question to open it." }],
+    get: [{ sel: ".install-copy", text: "Easiest: copy this and paste it in PowerShell." }],
+  };
+  /** Lingering this long in a section without trying anything brings a tip. */
+  const TIP_AFTER = 6000;
+  /** And at least this long between two tips. */
+  const TIP_GAP = 14000;
+  /** How long a tip (pointing, ring) lasts. */
+  const TIP_MS = 4200;
+
   /** Feet height inside the canvas, as a share of its height (from the shader's camera). */
   const FEET = 0.06;
   /** Narrower than this, Blip stays in the corner (no room beside things). */
@@ -403,6 +445,8 @@ void main() {
       clicks = [];
       return dance();
     }
+    // A click asks for a tip; when there's none here, Blip just has fun.
+    if (showTip(true)) return;
     hop(1.3);
     s.squash = 0.72;
     if (!reduced) s.spin = Math.PI * 2;
@@ -492,6 +536,75 @@ void main() {
     return y >= 64 ? { x, y } : null;
   }
 
+  // ---------- the guide: what can I try here? ----------
+  const tried = new Set(); // tips whose element you've used ("section:index")
+  const shown = new Set(); // tips Blip has offered on its own (once each)
+  let tipShown = { key: null, el: null, timer: 0 };
+  let lastTipAt = -Infinity;
+  let sectionSince = performance.now();
+  let cycle = 0;
+  /** Fully on screen (below the nav), so pointing at it makes sense. */
+  const inView = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.top >= 60 && r.bottom <= innerHeight - 10;
+  };
+  const tipsHere = () => (TIPS[current] || []).map((t, i) => ({ ...t, key: `${current}:${i}`, el: document.querySelector(t.sel) }));
+
+  /** Shows a tip for this section; `asked`: the visitor clicked Blip (may repeat tried ones). */
+  function showTip(asked) {
+    if (hidden || asleep) return false;
+    const visible = tipsHere().filter((t) => t.el && inView(t.el));
+    let pick = visible.find((t) => !tried.has(t.key) && (asked || !shown.has(t.key)));
+    if (!pick && asked && visible.length) pick = visible[cycle++ % visible.length];
+    if (!pick) return false;
+    shown.add(pick.key);
+    lastTipAt = performance.now();
+    spotlight(pick);
+    react("point", TIP_MS, pick.el);
+    s.act.go = pick.el; // fly over next to it
+    say(pick.text, TIP_MS);
+    return true;
+  }
+  function spotlight(tip) {
+    unspot();
+    tip.el.classList.add("blip-spot");
+    tipShown = { key: tip.key, el: tip.el, timer: setTimeout(unspot, TIP_MS) };
+  }
+  function unspot() {
+    clearTimeout(tipShown.timer);
+    tipShown.el?.classList.remove("blip-spot");
+    tipShown = { key: null, el: null, timer: 0 };
+  }
+  // Using something counts: it won't be hinted again (and the ring goes away).
+  const praise = ["You got it!", "That's it!", "Exactly."];
+  let praised = 0;
+  function noteUse(e) {
+    if (root.contains(e.target)) return;
+    for (const list of Object.entries(TIPS)) {
+      list[1].forEach((t, i) => {
+        const key = `${list[0]}:${i}`;
+        const el = document.querySelector(t.sel);
+        if (!el || !el.contains(e.target) || tried.has(key)) return;
+        tried.add(key);
+        if (tipShown.key === key) {
+          unspot();
+          if (praised++ < 3) {
+            react("cheer", 1600);
+            say(praise[praised % praise.length], 1600);
+          }
+        }
+      });
+    }
+  }
+  ["pointerdown", "focusin", "input"].forEach((t) => document.addEventListener(t, noteUse, true));
+  // Lingering without trying anything: offer the next tip.
+  setInterval(() => {
+    const now = performance.now();
+    if (hidden || asleep || document.hidden || pos.flying || s.act || now < s.danceUntil || bubble.classList.contains("on")) return;
+    if (now - sectionSince < TIP_AFTER || now - lastTipAt < TIP_GAP || now - lastInput > 20000) return;
+    showTip(false);
+  }, 1000);
+
   // ---------- friends from the crew drop by ----------
   const visitor = document.createElement("div");
   visitor.className = "buddy-visitor";
@@ -561,6 +674,8 @@ void main() {
       const inner = [...inBand].find((el) => ![...inBand].some((other) => other !== el && el.contains(other)));
       if (!inner || inner.id === current) return;
       current = inner.id;
+      sectionSince = performance.now();
+      unspot();
       const sec = SECTIONS[current];
       setMood(sec);
       if (sec.wave) s.wave = 1.8;
@@ -593,6 +708,16 @@ void main() {
     const corner = { x: vw - w - 12, y: vh - h + h * FEET - 10 };
     const onSelection = selectionPerch(w, h);
     if (onSelection) return onSelection;
+    // Guiding: stand next to the thing it's pointing at (right, else left).
+    const go = s.act?.go;
+    if (go?.isConnected && vw >= PERCH_MIN_WIDTH) {
+      const r = go.getBoundingClientRect();
+      const floor = Math.min(r.bottom, vh - 20);
+      const y = floor - h + h * FEET;
+      for (const x of [r.right + 10, r.left - w - 10]) {
+        if (x >= 8 && x <= vw - w - 8 && y >= 64 && y <= vh - h - 4) return { x, y };
+      }
+    }
     if (!sectionMood.perch || vw < PERCH_MIN_WIDTH || asleep) return corner;
     for (const [sel, mode] of sectionMood.perch) {
       const el = document.querySelector(sel);

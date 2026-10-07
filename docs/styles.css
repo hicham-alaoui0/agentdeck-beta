@@ -4803,6 +4803,31 @@ h2.metal .dim {
 .buddy-back:hover {
   color: var(--text);
 }
+/* The guide: what Blip is pointing at gets a soft pulsing ring ("try me"). */
+.blip-spot {
+  /* !important: many demo controls turn outlines off for their own focus style. */
+  outline-style: solid !important;
+  outline-width: 2px !important;
+  outline-color: rgba(110, 231, 183, 0.85);
+  outline-offset: 5px;
+  animation: blip-spot 1.3s ease-in-out infinite;
+}
+@keyframes blip-spot {
+  0%,
+  100% {
+    outline-color: rgba(110, 231, 183, 0.85);
+    outline-offset: 5px;
+  }
+  50% {
+    outline-color: rgba(110, 231, 183, 0.3);
+    outline-offset: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blip-spot {
+    animation: none;
+  }
+}
 .buddy-visitor {
   position: fixed;
   z-index: 59;
