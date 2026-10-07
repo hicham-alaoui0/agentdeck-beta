@@ -2045,10 +2045,32 @@ h2.metal .dim {
   color: var(--done);
 }
 .mascot.sleeping {
-  color: #59606b;
+  /* A usage limit: resting, not broken. The calm "limited" violet. */
+  color: var(--limited);
 }
-.mascot.no-aura .aura {
+.mascot.no-aura .aura,
+.mascot.no-aura .halo,
+.mascot.no-aura .halo-gap,
+.ring .mascot .halo,
+.ring .mascot .halo-gap {
   display: none;
+}
+/* Status outline (working / waiting / done): status color, a dark gap, then
+   the body, so it never blends into a body of a similar color. */
+.mascot .halo,
+.mascot .halo-gap {
+  fill: none;
+  stroke-linejoin: round;
+}
+.mascot .halo {
+  stroke: currentColor;
+  stroke-width: 7.5;
+  opacity: 0.85;
+  transition: stroke 0.45s ease;
+}
+.mascot .halo-gap {
+  stroke: #000;
+  stroke-width: 3.6;
 }
 .mascot .react,
 .mascot .float,
@@ -2102,8 +2124,9 @@ h2.metal .dim {
   transition: fill 0.45s ease;
 }
 .mascot .dim {
+  /* Asleep: a touch dimmer, still its own color. */
   fill: #0b0d10;
-  opacity: 0.42;
+  opacity: 0.12;
 }
 .mascot .limb {
   transform-box: view-box;
@@ -2116,7 +2139,7 @@ h2.metal .dim {
 }
 .mascot .leaf {
   transform-box: view-box;
-  transform-origin: 32px 15px;
+  transform-origin: 32px 25px; /* where Sprout's stem meets its head */
 }
 .mascot .zz {
   fill: var(--faint);

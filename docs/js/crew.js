@@ -31,11 +31,11 @@
     sprout: {
       name: "Sprout",
       light: "#e4dcff", color: "#c4b5fd", dark: "#8f7ae6",
-      box: [19, 15, 26, 37], rt: 13, rb: 10,
-      eyes: { y: 31, gap: 4.6, rx: 2.6, ry: 3.1 }, armY: 36,
+      box: [17, 25, 30, 27], rt: 15, rb: 9,
+      eyes: { y: 39, gap: 5, rx: 2.6, ry: 3 }, armY: 41,
       acc:
-        `<g class="acc leaf"><path d="M32 15.5q-.6-4 .8-7" fill="none" stroke="#3fbf6a" stroke-width="1.8" stroke-linecap="round"/>` +
-        `<path d="M32.8 8.6q5.2-5.4 9.6-2.2q-4.4 5.4-9.6 2.2z" fill="#4ade80"/><path d="M32.4 10.2q-5-3.8-8.8-.6q4.6 3.6 8.8.6z" fill="#86efac"/></g>`,
+        `<g class="acc leaf"><path d="M32 25.5q-.9-6 1.1-10.5" fill="none" stroke="#3fbf6a" stroke-width="2.4" stroke-linecap="round"/>` +
+        `<path d="M33.1 15.2q7.4-7.8 13.8-3.2q-6.3 7.8-13.8 3.2z" fill="#4ade80"/><path d="M32.6 17.5q-7.2-5.4-12.6-.9q6.6 5.2 12.6.9z" fill="#86efac"/></g>`,
     },
     pip: {
       name: "Pip",
@@ -43,13 +43,13 @@
       box: [15, 19, 34, 33], rt: 15, rb: 14,
       eyes: { y: 34, gap: 5.6, rx: 3.1, ry: 3.1 }, armY: 38,
       acc:
-        `<g class="acc"><path d="M32 19.5V10.5" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>` +
-        `<circle class="bulb" cx="32" cy="8.6" r="3"/><circle cx="31" cy="7.6" r="0.9" fill="#fff" opacity="0.7"/></g>`,
+        `<g class="acc"><path d="M32 19.5V11" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>` +
+        `<circle class="bulb" cx="32" cy="8.2" r="4"/><circle cx="30.7" cy="6.9" r="1.2" fill="#fff" opacity="0.7"/></g>`,
     },
     tofu: {
       name: "Tofu",
       light: "#fff4c4", color: "#fde68a", dark: "#e8bf45",
-      box: [16, 17, 32, 35], rt: 11, rb: 10,
+      box: [15, 19, 34, 33], rt: 6, rb: 6,
       eyes: { y: 35, gap: 5.4, rx: 2.9, ry: 2.9 }, armY: 39,
       acc:
         `<g class="acc"><path d="M15.5 25.5C15.5 10.5 48.5 10.5 48.5 25.5Z" fill="#f87171"/>` +
@@ -60,11 +60,11 @@
     dash: {
       name: "Dash",
       light: "#ffd9ec", color: "#f9a8d4", dark: "#e46aa9",
-      box: [19, 12, 26, 40], rt: 13, rb: 13,
-      eyes: { y: 29, gap: 4.6, rx: 2.4, ry: 3.3 }, armY: 35,
+      box: [21, 14, 22, 38], rt: 11, rb: 11,
+      eyes: { y: 30, gap: 4.2, rx: 2.3, ry: 3.2 }, armY: 35, lean: 10,
       acc:
-        `<g class="acc"><path d="M40.5 15.5l-5.6-3.6v7.2z" fill="#8b5cf6"/><path d="M40.5 15.5l5.6-3.6v7.2z" fill="#8b5cf6"/>` +
-        `<circle cx="40.5" cy="15.5" r="1.8" fill="#a78bfa"/></g>`,
+        `<g class="acc"><path d="M39 16.5l-7.6-5v10z" fill="#8b5cf6"/><path d="M39 16.5l7.6-5v10z" fill="#8b5cf6"/>` +
+        `<circle cx="39" cy="16.5" r="2.4" fill="#a78bfa"/></g>`,
     },
   };
 
@@ -86,7 +86,12 @@
     const eyeX = [32 - e.gap, 32 + e.gap];
     const grow = mood === "waiting" ? 1.18 : 1;
     const my = e.y + e.ry + 3.6; // mouth line
-    const auraOp = mood === "sleeping" ? 0 : mood === "idle" ? 0.22 : 0.4;
+    const auraOp = mood === "idle" ? 0.22 : mood === "sleeping" ? 0.3 : 0.4;
+    // Leaning (Dash): skewed around the ground line (y=52), so the feet stay put.
+    const lean = c.lean ? ` transform="translate(${(Math.tan((c.lean * Math.PI) / 180) * 52).toFixed(2)} 0) skewX(${-c.lean})"` : "";
+    // Working, waiting, done: an outline in the status color, a dark gap, then the body.
+    const halo =
+      mood === "working" || mood === "waiting" || mood === "happy" ? `<path class="halo" d="${d}"/><path class="halo-gap" d="${d}"/>` : "";
 
     let eyes;
     if (mood === "happy") eyes = eyeX.map((x) => `<path class="lid" d="M${x - 2.8} ${e.y + 1}q2.8 -4.4 5.6 0"/>`).join("");
@@ -124,7 +129,8 @@
       `<stop offset="48%" stop-color="${c.color}"/><stop offset="100%" stop-color="${c.dark}"/></linearGradient></defs>` +
       `<ellipse class="aura" cx="32" cy="32" rx="31" ry="31" fill="url(#aura-${uid})"/>` +
       `<ellipse class="shadow" cx="32" cy="60" rx="${bw * 0.36}" ry="2.2"/>` +
-      `<g class="react"><g class="float"><g class="sprite">` +
+      `<g class="react"><g class="float"><g class="sprite"><g${lean}>` +
+      halo +
       `<rect class="limb arm-left" x="${bx - 3}" y="${c.armY}" width="6" height="9.5" rx="3" fill="${c.dark}" style="transform-origin:${bx}px ${c.armY + 2}px"/>` +
       `<rect class="limb arm-right" x="${bx + bw - 3}" y="${c.armY}" width="6" height="9.5" rx="3" fill="${c.dark}" style="transform-origin:${bx + bw}px ${c.armY + 2}px"/>` +
       `<path class="body" d="${d}" fill="url(#skin-${uid})"/>` +
@@ -134,7 +140,7 @@
       cheeks +
       `<g class="gaze"><g class="eyes">${eyes}</g>${mouth}</g>` +
       (mood === "sleeping" ? `<path class="dim" d="${d}"/>` : "") +
-      `</g></g></g>` +
+      `</g></g></g></g>` +
       (mood === "sleeping" ? `<text class="zz" x="${Math.min(53, bx + bw + 2)}" y="14">z</text>` : "")
     );
   }
