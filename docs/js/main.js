@@ -6,7 +6,7 @@
   // Left empty, the buttons scroll to the download section, which then says the
   // beta is by invitation.
   const DOWNLOAD_URL = "https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_x64-setup.exe";
-  const VERSION = "0.14.3";
+  const VERSION = "0.16.1";
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));

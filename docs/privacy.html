@@ -106,7 +106,7 @@
     </a>
     <main class="doc">
       <h1>Privacy policy</h1>
-      <p class="updated">Last updated: 5 October 2026</p>
+      <p class="updated">Last updated: 7 October 2026</p>
       <p class="short"><strong>Short version: AgentDeck collects nothing. Everything stays on your computer.</strong></p>
 
       <h2>What AgentDeck does with your data</h2>
@@ -122,10 +122,26 @@
           removes all of it.
         </li>
         <li>
-          <b>Network:</b> the only network use is the optional <b>CI status</b> feature. When you turn it on, AgentDeck
-          asks <em>your</em> GitHub CLI (<code>gh</code>) for the status of your repository's GitHub Actions after an
-          agent pushes. That request goes from your computer to GitHub under your own GitHub account, as if you ran
-          <code>gh</code> yourself. It is off by default.
+          <b>Update check (optional):</b> when you turn on <b>Check for updates</b> (or click <b>Check now</b>),
+          AgentDeck downloads a small file describing its latest release from GitHub
+          (<code>github.com/hicham-alaoui0/agentdeck-beta</code>), at start and every few hours. The request carries
+          nothing about you or your sessions; GitHub sees your IP address, as with any download, under
+          <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's privacy statement</a>.
+          When you click <b>Install</b>, the new installer is downloaded from the same place. It is off until you turn
+          it on.
+        </li>
+        <li>
+          <b>CI status (optional):</b> when you turn it on, AgentDeck asks <em>your</em> GitHub CLI (<code>gh</code>)
+          for the status of your repository's GitHub Actions after an agent pushes. That request goes from your
+          computer to GitHub under your own GitHub account, as if you ran <code>gh</code> yourself. It is off by
+          default.
+        </li>
+        <li>
+          <b>Your phone (optional):</b> when you turn on <b>Setup → Phone</b>, AgentDeck listens on your local network
+          so a phone you pair by QR code can show your sessions and answer requests. The connection stays inside your
+          network (or your Tailscale network), is encrypted with a key that only the QR code carries, and never goes
+          through any server. Paired phones are kept in memory only and forgotten when AgentDeck restarts. It is off by
+          default.
         </li>
       </ul>
 
@@ -144,8 +160,8 @@
 
       <h2>Changes</h2>
       <p>
-        If this ever changes (for example, an optional update check), it will be listed here and in the changelog, and
-        it will be off until you turn it on.
+        If this ever changes, it will be listed here and in the changelog, and anything new that uses the network will
+        be off until you turn it on.
       </p>
 
       <h2>Contact</h2>
