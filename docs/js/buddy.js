@@ -12,7 +12,13 @@
 // - its rim light is its status color, like the colored outline in the app;
 // - head and eyes follow your cursor; it leans when you scroll fast;
 // - click it: squish, jump, spin; hover a Download button: it gets excited;
-// - leave the page alone and it falls asleep (violet), until you move.
+// - leave the page alone and it falls asleep (violet), until you move;
+// - the demos talk to it (`ad:*` events from stage.js / main.js): it points
+//   at an approval card, cheers or shrugs at your answer, and covers its eyes
+//   while you hold "Hold to allow" (thumbs up when you get there);
+// - now and then a friend from the crew flies by to say hi;
+// - select some text and it hops onto your selection;
+// - secret: type "blip" or click it 5 times.
 // Honors "reduce motion" (holds still), hides with ×, falls back to the 2D
 // Blip without WebGL. Renders only while visible.
 (function () {
@@ -50,6 +56,8 @@
   const FEET = 0.06;
   /** Narrower than this, Blip stays in the corner (no room beside things). */
   const PERCH_MIN_WIDTH = 900;
+  const SELECT_LINES = ["Ooh, good part.", "Noted!", "I'll sit right here.", "Reading along…"];
+  const CHEER_LINES = ["Nice!", "Approved. Back to work, agent.", "Good call."];
   const CLICK_LINES = ["Boing!", "Hey, that tickles.", "I run on hooks and good vibes.", "Psst: there's a 2D me in the app.", "Wheee!"];
 
   // ---------- DOM ----------
@@ -115,6 +123,30 @@
     eye: 1, blinkUntil: 0, nextBlink: 2000,
     armL: 0.35, armR: 0.35, wave: 0,
     excitedUntil: 0,
+    // A short scripted reaction: { pose, until, at } (see react()).
+    act: null,
+    danceUntil: 0,
+  };
+  /** Plays a pose for `ms` (pose: point, cover, peek, cheer, thumbs, shrug); `at` = what to look at. */
+  function react(pose, ms, at = null) {
+    s.act = { pose, until: performance.now() + ms, at };
+    kick();
+  }
+  /** Says a line only the first time this visit (demos loop; Blip shouldn't repeat itself). */
+  const spoken = new Set();
+  function sayOnce(key, text, ms) {
+    if (spoken.has(key)) return;
+    spoken.add(key);
+    say(text, ms);
+  }
+  const onScreen = (el) => {
+    if (!el?.isConnected) return false;
+    const r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth;
+  };
+  const center = (el) => {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   };
   const target = { yaw: 0, pitch: 0, roll: 0 };
   // Where Blip is on screen (top-left of its box) and how fast it's flying.
@@ -363,13 +395,137 @@ void main() {
     kick();
   }
 
+  let clicks = [];
   canvas.addEventListener("click", () => {
+    const now = performance.now();
+    clicks = clicks.filter((t) => now - t < 2500).concat(now);
+    if (clicks.length >= 5) {
+      clicks = [];
+      return dance();
+    }
     hop(1.3);
     s.squash = 0.72;
     if (!reduced) s.spin = Math.PI * 2;
     say(CLICK_LINES[Math.floor(Math.random() * CLICK_LINES.length)], 2600);
     kick();
   });
+
+  // ---------- secret: type "blip" (or click it 5 times) ----------
+  let typed = "";
+  addEventListener("keydown", (e) => {
+    const t = e.target;
+    if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t?.isContentEditable || e.key.length !== 1) return;
+    typed = (typed + e.key.toLowerCase()).slice(-4);
+    if (typed === "blip") dance();
+  });
+  function dance() {
+    if (hidden) return;
+    s.danceUntil = performance.now() + 4200;
+    say("♪ Blip, blip, blip! ♪", 3800);
+    hop(1.2);
+    kick();
+  }
+
+  // ---------- the demos ----------
+  // The live demo's island asks for permission: look and point at it.
+  addEventListener("ad:island", (e) => {
+    if (e.detail.mode !== "ask" || !onScreen(e.detail.el) || asleep) return;
+    react("point", 3800, e.detail.el);
+    sayOnce("ask", "Psst, it's asking you!", 2600);
+  });
+  // An answer, in either demo: cheer at a yes, shrug at a no.
+  addEventListener("ad:decision", (e) => {
+    if (!onScreen(e.detail.el) || asleep) return;
+    if (s.act?.pose === "thumbs" && performance.now() < s.act.until) return; // the hold already got its cheer
+    if (e.detail.act === "deny") {
+      react("shrug", 2200, e.detail.el);
+      sayOnce("deny", "Denied. Safety first.", 2400);
+    } else {
+      react("cheer", 2000, e.detail.el);
+      hop(0.9);
+      sayOnce("allow", CHEER_LINES[Math.floor(Math.random() * CHEER_LINES.length)], 2200);
+    }
+  });
+  // Hold to allow: it can't watch… then a thumbs up when you get there.
+  addEventListener("ad:hold", (e) => {
+    if (!onScreen(e.detail.el) || asleep || hidden) return;
+    const phase = e.detail.phase;
+    if (phase === "start") {
+      react("cover", 6000, e.detail.el);
+      say("I can't look…", 1800);
+    } else if (phase === "cancel") {
+      react("peek", 1200, e.detail.el);
+      say("Phew. Changed your mind?", 2000);
+    } else {
+      react("thumbs", 2400, e.detail.el);
+      hop(1);
+      say("A deliberate yes. Nice.", 2400);
+    }
+  });
+
+  // ---------- your text selection: it hops onto it ----------
+  let selRange = null;
+  let selTimer = 0;
+  document.addEventListener("selectionchange", () => {
+    clearTimeout(selTimer);
+    selTimer = setTimeout(() => {
+      const sel = getSelection();
+      const text = sel && !sel.isCollapsed ? sel.toString().trim() : "";
+      const node = sel?.anchorNode?.parentElement;
+      if (text.length < 3 || !node || node.closest(".buddy, input, textarea") || innerWidth < 640) {
+        selRange = null;
+        return kick();
+      }
+      selRange = sel.getRangeAt(0).cloneRange();
+      say(SELECT_LINES[Math.floor(Math.random() * SELECT_LINES.length)], 1800);
+      kick();
+    }, 450);
+  });
+  /** Where to stand on the selection: on top of its last line, near its end. */
+  function selectionPerch(w, h) {
+    if (!selRange) return null;
+    const rects = selRange.getClientRects();
+    const r = rects[rects.length - 1];
+    if (!r || r.bottom < 70 || r.top > innerHeight) return null;
+    const x = Math.max(8, Math.min(innerWidth - w - 8, r.right - w * 0.5));
+    const y = r.top - h + h * FEET + 2;
+    return y >= 64 ? { x, y } : null;
+  }
+
+  // ---------- friends from the crew drop by ----------
+  const visitor = document.createElement("div");
+  visitor.className = "buddy-visitor";
+  visitor.setAttribute("aria-hidden", "true");
+  let visiting = null; // { name } while a friend is on screen
+  function scheduleVisit(first) {
+    setTimeout(visit, (first ? 25000 : 60000) + Math.random() * 45000);
+  }
+  function visit() {
+    scheduleVisit(false);
+    if (hidden || asleep || document.hidden || reduced || innerWidth < 700 || !window.Crew) return;
+    const ids = Object.keys(Crew.CHARACTERS).filter((id) => id !== "blip");
+    const id = ids[Math.floor(Math.random() * ids.length)];
+    const name = Crew.CHARACTERS[id].name;
+    const box = root.getBoundingClientRect();
+    const side = box.left + box.width / 2 > innerWidth / 2 ? "left" : "right";
+    visitor.className = `buddy-visitor from-${side}`;
+    visitor.style.top = `${Math.max(90, Math.min(innerHeight - 140, box.top + 10))}px`;
+    visitor.innerHTML = `<span data-mascot="${id}" data-mood="happy" data-size="64"></span><b>Hi Blip!</b>`;
+    Crew.mount(visitor);
+    requestAnimationFrame(() => requestAnimationFrame(() => visitor.classList.add("in")));
+    visiting = { name };
+    setTimeout(() => {
+      s.wave = 2;
+      say(`Oh hey, ${name}!`, 2200);
+      kick();
+    }, 900);
+    setTimeout(() => {
+      visitor.classList.remove("in");
+      visiting = null;
+    }, 3800);
+  }
+  /** Dev aid: `AD.visit()` in the console brings a friend right away. */
+  (window.AD = window.AD || {}).visit = visit;
   canvas.addEventListener("pointerenter", () => {
     s.wave = 1.6;
     kick();
@@ -391,20 +547,27 @@ void main() {
   );
 
   // Sections: the one crossing the middle of the screen sets the mood.
+  // Sections can nest (the demo is inside the hero), so it keeps every section
+  // in the middle band and picks the innermost one.
   const said = new Set();
+  const inBand = new Set();
+  let current = null;
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        const sec = SECTIONS[e.target.id];
-        if (!sec) continue;
-        setMood(sec);
-        if (sec.wave) s.wave = 1.8;
-        if (!said.has(e.target.id) && !hidden) {
-          said.add(e.target.id);
-          if (e.target.id !== "top" || scrollY < 40) say(sec.line);
-          hop(0.7);
-        }
+        if (e.isIntersecting) inBand.add(e.target);
+        else inBand.delete(e.target);
+      }
+      const inner = [...inBand].find((el) => ![...inBand].some((other) => other !== el && el.contains(other)));
+      if (!inner || inner.id === current) return;
+      current = inner.id;
+      const sec = SECTIONS[current];
+      setMood(sec);
+      if (sec.wave) s.wave = 1.8;
+      if (!said.has(current) && !hidden) {
+        said.add(current);
+        if (current !== "top" || scrollY < 40) say(sec.line);
+        hop(0.7);
       }
     },
     { rootMargin: "-45% 0px -45% 0px" },
@@ -428,6 +591,8 @@ void main() {
   function perchTarget(w, h) {
     const vw = innerWidth, vh = innerHeight;
     const corner = { x: vw - w - 12, y: vh - h + h * FEET - 10 };
+    const onSelection = selectionPerch(w, h);
+    if (onSelection) return onSelection;
     if (!sectionMood.perch || vw < PERCH_MIN_WIDTH || asleep) return corner;
     for (const [sel, mode] of sectionMood.perch) {
       const el = document.querySelector(sel);
@@ -461,17 +626,23 @@ void main() {
     }
     const mood = s.excitedUntil > now ? "happy" : s.mood;
 
-    // Look at the cursor (the head turns, the eyes lead).
+    if (s.act && now > s.act.until) s.act = null;
+    const dancing = now < s.danceUntil;
+
+    // Look at the cursor, or at what it's reacting to, or at a visiting friend.
     const r = canvas.getBoundingClientRect();
-    if (pointer && !asleep && !reduced) {
-      const dx = (pointer.x - (r.left + r.width / 2)) / 500;
-      const dy = (pointer.y - (r.top + r.height * 0.4)) / 500;
+    const focus =
+      (s.act?.at?.isConnected && center(s.act.at)) || (visiting && center(visitor)) || (pointer && !asleep ? pointer : null);
+    if (focus && !reduced) {
+      const dx = (focus.x - (r.left + r.width / 2)) / 500;
+      const dy = (focus.y - (r.top + r.height * 0.4)) / 500;
       target.yaw = Math.max(-1, Math.min(1, dx)) * 0.6;
       target.pitch = Math.max(-1, Math.min(1, dy)) * 0.35;
     } else {
       target.yaw = Math.sin(time * 0.4) * 0.15;
       target.pitch = asleep ? 0.25 : 0;
     }
+    if (dancing && !reduced) target.yaw = Math.sin(time * 5) * 0.8;
     // Lean into fast scrolling.
     scrollV *= Math.exp(-6 * dt);
     target.roll = reduced ? 0 : Math.max(-0.3, Math.min(0.3, -scrollV * 0.004));
@@ -551,6 +722,49 @@ void main() {
       // Arms out like wings while it flies over.
       armL = armR = 1.75 + Math.sin(time * 16) * 0.35;
     }
+    // Reactions to the demos (they win over the mood pose for a moment).
+    let eyeOverride = null;
+    const pose = s.act?.pose;
+    if (pose === "point" && s.act.at?.isConnected) {
+      // Raise the arm on the card's side, aimed at it.
+      const c = center(s.act.at);
+      const dx = c.x - (r.left + r.width / 2), dy = c.y - (r.top + r.height * 0.45);
+      const aim = Math.atan2(Math.abs(dx), dy);
+      if (dx < 0) armL = aim;
+      else armR = aim;
+      eyeBig = 1.1;
+      mouth = 2;
+    } else if (pose === "cover") {
+      armL = armR = 2.75;
+      eyeOverride = 0.1;
+      mouth = 3;
+    } else if (pose === "peek") {
+      armL = 2.75;
+      armR = 1.2;
+      eyeBig = 1.15;
+    } else if (pose === "cheer") {
+      armL = armR = 2.4 + Math.sin(time * 10) * 0.3;
+      mouth = 1;
+      eyeOverride = 0.35;
+    } else if (pose === "thumbs") {
+      armR = 2.95 + Math.sin(time * 9) * 0.12;
+      armL = 0.5;
+      mouth = 1;
+      eyeOverride = 0.35;
+    } else if (pose === "shrug") {
+      armL = armR = 1.25;
+      mouth = 3;
+      eyeOverride = 0.6;
+    }
+    if (dancing) {
+      // Arms in turn, hops on the beat, a wiggle, and every color it knows.
+      const beat = Math.sin(time * 9);
+      armL = 1.6 + beat * 1.1;
+      armR = 1.6 - beat * 1.1;
+      mouth = 1;
+      eyeOverride = 0.35;
+      if (!reduced && s.y === 0 && Math.sin(time * 6.3) > 0.9) hop(0.55);
+    }
     s.armL = approach(s.armL, armL, 14, dt);
     s.armR = approach(s.armR, armR, 14, dt);
 
@@ -563,9 +777,15 @@ void main() {
       s.nextBlink = now + 2200 + Math.random() * 4000;
     }
     if (now < s.blinkUntil) eye = 0.1;
+    if (eyeOverride !== null) eye = eyeOverride;
     s.eye = approach(s.eye, eye, 30, dt);
 
-    const glowT = COLORS[mood];
+    const reacting = pose === "cheer" || pose === "thumbs" ? "happy" : pose === "point" || pose === "cover" || pose === "peek" ? "waiting" : null;
+    let glowT = COLORS[reacting || mood];
+    if (dancing) {
+      const hue = (time * 0.6) % 1;
+      glowT = [0, 1, 2].map((i) => 0.5 + 0.5 * Math.cos(6.283 * (hue + i / 3)));
+    }
     for (let i = 0; i < 3; i++) s.glow[i] = approach(s.glow[i], glowT[i], 4, dt);
 
     resize();
@@ -576,12 +796,12 @@ void main() {
     gl.uniform1f(U.uSquash, s.squash * (1 + breathe * 0.025));
     gl.uniform1f(U.uEye, s.eye);
     gl.uniform1f(U.uEyeBig, eyeBig);
-    gl.uniform1f(U.uMouth, mood === "happy" || s.excitedUntil > now ? 1 : mouth);
+    gl.uniform1f(U.uMouth, pose || dancing ? mouth : mood === "happy" || s.excitedUntil > now ? 1 : mouth);
     gl.uniform1f(U.uArmL, s.armL);
     gl.uniform1f(U.uArmR, s.armR);
     gl.uniform2f(U.uLook, s.lookX, s.lookY);
     gl.uniform3f(U.uGlow, s.glow[0], s.glow[1], s.glow[2]);
-    gl.uniform1f(U.uGlowAmt, mood === "idle" ? 0.15 : 1);
+    gl.uniform1f(U.uGlowAmt, mood === "idle" && !reacting && !dancing ? 0.15 : 1);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     // The shadow shrinks as Blip jumps.
@@ -596,7 +816,8 @@ void main() {
   }
 
   function start() {
-    document.body.append(root, back);
+    document.body.append(root, back, visitor);
+    scheduleVisit(true);
     if (window.Crew) Crew.mount(back);
     if (!gl && window.Crew) Crew.mount(root);
     root.classList.toggle("gone", hidden);

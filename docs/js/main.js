@@ -1074,6 +1074,7 @@
 
   function decided(act, a) {
     if (!a) return;
+    window.AD?.emit("decision", { act, el: rdCard, risk: a.risk });
     const msg = {
       deny: ["no", "Denied", "The agent is told no, and it's in your audit log."],
       allow:

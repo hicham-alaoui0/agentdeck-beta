@@ -5,6 +5,9 @@
 (function () {
   const AD = (window.AD = window.AD || {});
 
+  /** Tells the page (Blip, buddy.js) what the demos are doing: `ad:<name>` events. */
+  AD.emit = (name, detail) => dispatchEvent(new CustomEvent(`ad:${name}`, { detail }));
+
   /** Hold-to-allow (app: Approval.tsx): a fill grows while held; letting go cancels. */
   AD.holdButton = function holdButton(btn, ms, onDone) {
     btn.style.setProperty("--hold-ms", ms + "ms");
@@ -19,15 +22,18 @@
         if (e.repeat) return;
       }
       btn.classList.add("holding");
+      AD.emit("hold", { phase: "start", el: btn });
       clearTimeout(timer);
       timer = setTimeout(() => {
         btn.classList.remove("holding");
+        AD.emit("hold", { phase: "done", el: btn });
         onDone();
       }, ms);
     };
     const stop = (e) => {
       if (e && e.type === "keyup" && !isKey(e)) return;
       clearTimeout(timer);
+      if (btn.classList.contains("holding")) AD.emit("hold", { phase: "cancel", el: btn });
       btn.classList.remove("holding");
     };
     btn.addEventListener("pointerdown", start);
@@ -335,6 +341,7 @@
     isl.appendChild(c);
     Crew.mount(c);
     isl.dataset.mode = mode;
+    AD.emit("island", { mode, el: isl });
     // The content is positioned on its own, so its size doesn't depend on the island's.
     isl.style.width = Math.ceil(c.offsetWidth) + "px";
     isl.style.height = Math.ceil(c.offsetHeight) + "px";
@@ -411,6 +418,7 @@
       const finish = (act) => {
         if (done) return;
         done = true;
+        AD.emit("decision", { act, el: card });
         res(act);
       };
       // Click guard (app: 400 ms after a card appears).
