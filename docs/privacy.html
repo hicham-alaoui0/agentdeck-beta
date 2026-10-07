@@ -155,6 +155,21 @@
         user name and computer name are removed.
       </p>
 
+      <h2>When AgentDeck crashes</h2>
+      <p>
+        If AgentDeck hits an error in its own code, it saves a short <b>problem report</b> in
+        <code>%APPDATA%\AgentDeck\reports</code>: AgentDeck's version, which part failed, the error message and where in
+        AgentDeck's code it happened. Your user name, computer name, home folder and AgentDeck's tokens are removed. At
+        start, AgentDeck also reads the entries Windows itself keeps about AgentDeck crashing or freezing (the
+        Application event log on your PC), and turns those into reports too. It reads only AgentDeck's entries.
+      </p>
+      <p>
+        Reports stay on your computer. AgentDeck shows them on the next start (and in <b>Setup → Diagnostics</b>) with
+        exactly what a report contains. <b>Report on GitHub</b> opens a GitHub issue page in your browser, filled in for
+        you to read, change and submit, or not. <b>Dismiss</b> deletes the report. Nothing is sent unless you submit
+        that page.
+      </p>
+
       <h2>This website</h2>
       <p>No cookies, no analytics, and no third-party requests: fonts and images are served from this site.</p>
 

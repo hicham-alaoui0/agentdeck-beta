@@ -6,7 +6,7 @@
   // Left empty, the buttons scroll to the download section, which then says the
   // beta is by invitation.
   const DOWNLOAD_URL = "https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_x64-setup.exe";
-  const VERSION = "0.16.2";
+  const VERSION = "0.16.3";
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -125,6 +125,28 @@
   } else {
     $("#betaNote").hidden = false;
   }
+
+  // "Copy" next to the one-command install.
+  $$("[data-copy]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      const text = $(btn.dataset.copy).textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents($(btn.dataset.copy));
+        getSelection().removeAllRanges();
+        getSelection().addRange(range);
+        document.execCommand("copy");
+      }
+      btn.textContent = "Copied";
+      btn.classList.add("done");
+      setTimeout(() => {
+        btn.textContent = "Copy";
+        btn.classList.remove("done");
+      }, 1800);
+    }),
+  );
 
   /** Runs fn while el is on screen (and the tab is visible). */
   function whileVisible(el, onShow, onHide) {

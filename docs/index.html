@@ -619,7 +619,7 @@
             <li class="step glass spot reveal">
               <span class="step-n">Step 01</span>
               <h3>Install</h3>
-              <p>Double-click the installer. It installs for your user only, no admin rights, and starts with Windows (you can turn that off).</p>
+              <p>Double-click the installer, or <a href="#install">install with one command</a>. It installs for your user only, no admin rights, and starts with Windows (you can turn that off).</p>
               <div class="smart">
                 <div class="smart-bar"><b>Windows protected your PC</b></div>
                 <p>The beta isn't code-signed yet, so Windows may warn you.</p>
@@ -741,11 +741,28 @@
             </a>
           </div>
           <p class="file reveal" style="--d: 180ms">
-            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.16.2</span> · 5 MB · installs per user, no admin rights
+            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.16.3</span> · 5 MB · installs per user, no admin rights
           </p>
           <p class="file-more reveal" style="--d: 200ms">
             <a href="https://github.com/hicham-alaoui0/agentdeck-beta/releases">Release notes and older versions</a>
           </p>
+          <div class="install reveal" style="--d: 210ms" id="install">
+            <p class="install-label"><b>Or install with one command</b> in PowerShell: no browser warnings.</p>
+            <div class="install-box">
+              <code id="installCmd">$f="$env:TEMP\AgentDeck-setup.exe"; iwr https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_x64-setup.exe -OutFile $f -UseBasicParsing; start $f</code>
+              <button class="install-copy" type="button" data-copy="#installCmd">Copy</button>
+            </div>
+            <p class="install-note">Downloads the latest installer from this site's GitHub releases and opens it.</p>
+            <details class="edge-help">
+              <summary>Downloading in Microsoft Edge? It may warn you. Here's how to keep the file.</summary>
+              <ol>
+                <li>In <b>Downloads</b>, hover the file, click <b>⋯</b> → <b>Keep</b> <i>(Conserver)</i>.</li>
+                <li>Edge asks again: click the small <b>⌄ arrow</b> on the right of <b>Delete</b> <i>(Supprimer)</i>, then <b>Keep anyway</b> <i>(Conserver quand même)</i>. Careful: clicking the word itself deletes the file.</li>
+                <li>Open it. If Windows says it protected your PC: <b>More info</b> → <b>Run anyway</b> <i>(Informations complémentaires → Exécuter quand même)</i>.</li>
+              </ol>
+              <p class="install-note" style="text-align:left;margin:0 0 12px">Why: the beta isn't code-signed yet and is new, so Windows doesn't know it. Updates from inside the app skip all of this.</p>
+            </details>
+          </div>
           <p class="beta-note reveal" style="--d: 220ms" id="betaNote" hidden>
             AgentDeck is in a small private beta right now: the installer is shared by invitation.
           </p>
@@ -766,7 +783,7 @@
 
     <footer class="foot">
       <div class="wrap foot-row">
-        <a class="foot-brand" href="#top"><img src="assets/favicon.svg" alt="" width="28" height="28" /><b>AgentDeck</b><span>v<span data-version>0.16.2</span> beta</span></a>
+        <a class="foot-brand" href="#top"><img src="assets/favicon.svg" alt="" width="28" height="28" /><b>AgentDeck</b><span>v<span data-version>0.16.3</span> beta</span></a>
         <nav class="foot-links" aria-label="Footer">
           <a href="#how">How it works</a>
           <a href="#features">Features</a>
@@ -790,5 +807,6 @@
     <script src="js/crew.js"></script>
     <script src="js/stage.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/buddy.js"></script>
   </body>
 </html>
