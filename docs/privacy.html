@@ -7,7 +7,7 @@
     <meta name="description" content="AgentDeck collects nothing. Everything stays on your computer." />
     <meta name="theme-color" content="#050506" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=202610071917" />
+    <link rel="stylesheet" href="styles.css?v=202610091951" />
     <style>
       .doc {
         max-width: 720px;
@@ -117,8 +117,8 @@
           permission requests those agents send it through their hooks. It does not read their login credentials.
         </li>
         <li>
-          <b>What it stores, locally</b> in <code>%APPDATA%\AgentDeck</code>: your rules, settings, usage numbers, and an
-          audit log of approval requests (kept 90 days). Uninstalling with <b>Delete the application data</b> ticked
+          <b>What it stores, locally</b> in <code>%APPDATA%\AgentDeck</code>: your shortcuts, settings, usage numbers, and a
+          history of approval requests (kept 90 days). Uninstalling with <b>Delete the application data</b> ticked
           removes all of it.
         </li>
         <li>
@@ -137,7 +137,7 @@
           default.
         </li>
         <li>
-          <b>Your phone (optional):</b> when you turn on <b>Setup → Phone</b>, AgentDeck listens on your local network
+          <b>Your phone (optional):</b> when you turn on <b>Settings → Phone</b>, AgentDeck listens on your local network
           so a phone you pair by QR code can show your sessions and answer requests. The connection stays inside your
           network (or your Tailscale network), is encrypted with a key that only the QR code carries, and never goes
           through any server. Paired phones are kept in memory only and forgotten when AgentDeck restarts. It is off by
@@ -164,7 +164,7 @@
         Application event log on your PC), and turns those into reports too. It reads only AgentDeck's entries.
       </p>
       <p>
-        Reports stay on your computer. AgentDeck shows them on the next start (and in <b>Setup → Diagnostics</b>) with
+        Reports stay on your computer. AgentDeck shows them on the next start (and in <b>Settings → Help</b>) with
         exactly what a report contains. <b>Report on GitHub</b> opens a GitHub issue page in your browser, filled in for
         you to read, change and submit, or not. <b>Dismiss</b> deletes the report. Nothing is sent unless you submit
         that page.
@@ -194,7 +194,7 @@
         <p>© 2026 AgentDeck</p>
       </div>
     </footer>
-    <script src="js/crew.js?v=202610071917"></script>
+    <script src="js/crew.js?v=202610091951"></script>
     <script>
       Crew.mount(document);
     </script>

@@ -6,7 +6,7 @@
   // Left empty, the buttons scroll to the download section, which then says the
   // beta is by invitation.
   const DOWNLOAD_URL = "https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_x64-setup.exe";
-  const VERSION = "0.16.3";
+  const VERSION = "0.17.0";
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -1076,16 +1076,16 @@
     if (!a) return;
     window.AD?.emit?.("decision", { act, el: rdCard, risk: a.risk });
     const msg = {
-      deny: ["no", "Denied", "The agent is told no, and it's in your audit log."],
+      deny: ["no", "Denied", "The agent is told no, and it's in your History."],
       allow:
         a.risk === "critical"
           ? ["ok", "Allowed once", "Critical requests can never become a rule. Held for 1.5 s, so it was on purpose."]
           : a.risk === "high"
             ? ["ok", "Allowed once", "You held for 0.8 s: a deliberate yes, not a reflex."]
-            : ["ok", "Allowed once", "Logged in your audit log."],
+            : ["ok", "Allowed once", "Saved in your History."],
       always:
         a.risk === "high"
-          ? ["ok", "Allowed, and a rule saved", "Rules skip high-risk requests unless you raise their limit in Rules."]
+          ? ["ok", "Allowed, and a rule saved", "Shortcuts skip high-risk requests unless you allow it in Safety."]
           : ["ok", "Always allowed", "A rule now allows this kind of request in this project."],
     }[act];
     rdIsl.classList.remove("critical", "beam-on");
@@ -1122,6 +1122,7 @@
   // Setup
   // =====================================================================
 
+  // The setup guide's switches, one per agent.
   $$(".h-btn").forEach((b) => {
     const small = b.parentElement.querySelector("small");
     const before = small.innerHTML;
@@ -1129,8 +1130,8 @@
     b.addEventListener("click", () => {
       const on = !b.classList.contains("on");
       b.classList.toggle("on", on);
-      b.textContent = on ? "✓ On" : "Turn on";
-      small.innerHTML = on ? (isCodex ? "Backup saved · now trust them with <code>/hooks</code>" : "Backup saved · restart running sessions") : before;
+      b.setAttribute("aria-checked", String(on));
+      small.innerHTML = on ? (isCodex ? "Connected · type <code>/hooks</code> in Codex to trust it" : "Connected · restart open sessions") : before;
       small.style.color = on ? "#4ade80" : "";
     });
   });

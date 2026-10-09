@@ -19,7 +19,7 @@
     <link rel="canonical" href="https://hicham-alaoui0.github.io/agentdeck-beta/" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="assets/fonts/inter-opsz-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=202610071917" />
+    <link rel="stylesheet" href="styles.css?v=202610091951" />
     <script>
       document.documentElement.classList.add("js");
     </script>
@@ -278,9 +278,9 @@
               <div class="viz">
                 <div class="mini-app" id="miniApp">
                   <div class="mini-top">
-                    <span class="seg"><b>Sessions</b><span>Rules</span><span>Setup</span></span>
+                    <span class="t-waiting">1 needs you</span><span class="t-working">2 working</span><span class="t-done">1 done</span>
                     <span class="sp"></span>
-                    <span class="t-working">2 working</span><span class="t-waiting">1 needs you</span><span class="t-done">1 done</span>
+                    <span class="mini-gear" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.15 5.56 10.53 3.22 13.47 3.22 13.85 5.56 15.25 6.14 17.17 4.75 19.25 6.83 17.86 8.75 18.44 10.15 20.78 10.53 20.78 13.47 18.44 13.85 17.86 15.25 19.25 17.17 17.17 19.25 15.25 17.86 13.85 18.44 13.47 20.78 10.53 20.78 10.15 18.44 8.75 17.86 6.83 19.25 4.75 17.17 6.14 15.25 5.56 13.85 3.22 13.47 3.22 10.53 5.56 10.15 6.14 8.75 4.75 6.83 6.83 4.75 8.75 6.14Z" /><circle cx="12" cy="12" r="2.6" /></svg></span>
                   </div>
                   <div class="mini-body">
                     <ul class="mini-list" role="listbox" aria-label="Sessions">
@@ -458,11 +458,11 @@
             <article class="cell glass spot c-audit reveal" style="--d: 60ms">
               <div class="cell-copy">
                 <span class="cell-ic" style="--ic: #ff9f80"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.5 2.5h6l3 3v12h-9z" /><path d="M11.5 2.5v3h3M8 10h4.5M8 13h4.5" /></svg></span>
-                <h3>An audit log of every decision</h3>
+                <h3>A history of every decision</h3>
                 <p>Every request and how it ended: who decided, how long it waited. Risky ones allowed in under 2 seconds get flagged.</p>
               </div>
               <div class="viz">
-                <div class="audit" role="table" aria-label="Audit log example">
+                <div class="audit" role="table" aria-label="History example">
                   <div class="a-row" role="row">
                     <time>10:42</time><span class="out allow">Allowed</span><code>npm install --save-dev vitest</code><span class="risk medium">MEDIUM</span><span class="who">you · 3.1s</span>
                   </div>
@@ -518,8 +518,8 @@
               </div>
               <ul class="rd-legend">
                 <li><span class="risk">LOW</span> Allow, Always or Deny in one click</li>
-                <li><span class="risk medium">MEDIUM</span> Same, and "Always" rules apply</li>
-                <li><span class="risk high">HIGH</span> Hold Allow for 0.8 s. Rules skip it unless you opt in</li>
+                <li><span class="risk medium">MEDIUM</span> Same, and your "Always" shortcuts apply</li>
+                <li><span class="risk high">HIGH</span> Hold Allow for 0.8 s. Shortcuts skip it unless you opt in</li>
                 <li><span class="risk critical">CRITICAL</span> Hold Allow for 1.5 s. Only ever allowed once</li>
               </ul>
               <p class="rd-note">
@@ -550,12 +550,12 @@
             <article class="reveal" style="--d: 120ms">
               <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18M5 18c1-6 4-9 7-9s6 3 7 9" /><path d="M9 13h.01M12 12h.01M15 13h.01" /></svg></span>
               <h3>Built-in speed bumps</h3>
-              <p>Force-pushes, <code>rm -rf</code> and reading key files are denied unless you turn the speed bumps off in Rules.</p>
+              <p>Force-pushes, <code>rm -rf</code> and reading key files are denied unless you switch them off in Safety.</p>
             </article>
             <article class="reveal" style="--d: 180ms">
               <span class="p-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z" /><path d="m9 12 2 2 4-4" /></svg></span>
-              <h3>Rules with limits</h3>
-              <p>"Always" rules never approve a high-risk request unless that rule opts in. Critical requests can only be allowed once.</p>
+              <h3>Shortcuts with limits</h3>
+              <p>An "Always" shortcut never approves a high-risk request unless you say so. Critical requests can only be allowed once.</p>
             </article>
           </div>
           <p class="honest reveal">
@@ -583,7 +583,7 @@
             </article>
             <article class="glass reveal" style="--d: 60ms">
               <span class="p-k">Stores, locally</span>
-              <p>Your rules, settings, usage numbers and the audit log (kept 90 days), all in one folder:</p>
+              <p>Your shortcuts, settings, usage numbers and history (kept 90 days), all in one folder:</p>
               <code class="p-path">%APPDATA%\AgentDeck</code>
             </article>
             <article class="glass reveal p-zero" style="--d: 120ms">
@@ -611,8 +611,8 @@
               <h2 class="reveal metal" style="--d: 60ms">Up and running <span class="dim">in a minute.</span></h2>
             </div>
             <p class="lead reveal" style="--d: 120ms">
-              Seeing your sessions needs no setup at all. A short guide connects approvals, and a health check keeps
-              them working when your agents update.
+              Seeing your sessions needs no setup at all. A short guide connects your agents with one switch each,
+              and Settings tells you if anything needs a fix.
             </p>
           </div>
           <ol class="steps">
@@ -629,19 +629,15 @@
             <li class="step glass spot reveal" style="--d: 60ms">
               <span class="step-n">Step 02</span>
               <h3>Connect your agents</h3>
-              <p>One button each. AgentDeck adds its hooks and saves a backup of your settings first.</p>
+              <p>One switch each. AgentDeck saves a backup of your agents' settings first.</p>
               <div class="health" id="health">
                 <div class="h-row">
-                  <span class="h-t"><b>Claude Code approvals</b><small>Hooks in ~/.claude/settings.json</small></span>
-                  <button class="h-btn">Turn on</button>
+                  <span class="h-t"><b>Claude Code</b><small>Not connected yet</small></span>
+                  <button class="h-btn" role="switch" aria-checked="false" aria-label="Connect Claude Code"></button>
                 </div>
                 <div class="h-row">
-                  <span class="h-t"><b>Claude usage meter</b><small>Optional · Pro/Max</small></span>
-                  <button class="h-btn">Turn on</button>
-                </div>
-                <div class="h-row">
-                  <span class="h-t"><b>Codex</b><small>Then run <code>/hooks</code> in Codex to trust them</small></span>
-                  <button class="h-btn">Turn on</button>
+                  <span class="h-t"><b>Codex</b><small>Not connected yet</small></span>
+                  <button class="h-btn" role="switch" aria-checked="false" aria-label="Connect Codex"></button>
                 </div>
               </div>
             </li>
@@ -718,7 +714,7 @@
             </details>
             <details class="reveal">
               <summary>Why don't I see Claude usage numbers?</summary>
-              <div><p>Claude only shares usage through a status line, in terminal sessions, on Pro and Max plans. Turn on the usage meter in Setup.</p></div>
+              <div><p>Claude only shares usage through a status line, in terminal sessions, on Pro and Max plans. Turn on <b>Show my Claude usage</b> in Settings.</p></div>
             </details>
             <details class="reveal">
               <summary>What if an agent update changes its file format?</summary>
@@ -741,7 +737,7 @@
             </a>
           </div>
           <p class="file reveal" style="--d: 180ms">
-            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.16.3</span> · 5 MB · installs per user, no admin rights
+            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.17.0</span> · 5 MB · installs per user, no admin rights
           </p>
           <p class="file-more reveal" style="--d: 200ms">
             <a href="https://github.com/hicham-alaoui0/agentdeck-beta/releases">Release notes and older versions</a>
@@ -804,9 +800,9 @@
       </div>
     </footer>
 
-    <script src="js/crew.js?v=202610071917"></script>
-    <script src="js/stage.js?v=202610071917"></script>
-    <script src="js/main.js?v=202610071917"></script>
-    <script src="js/buddy.js?v=202610071917"></script>
+    <script src="js/crew.js?v=202610091951"></script>
+    <script src="js/stage.js?v=202610091951"></script>
+    <script src="js/main.js?v=202610091951"></script>
+    <script src="js/buddy.js?v=202610091951"></script>
   </body>
 </html>

@@ -635,7 +635,7 @@
     tab("a", "working");
     if (act === "allow") {
       w.innerHTML = r(`<span class="ok">✓ Allowed once on AgentDeck</span>`)[1];
-      setIsland("result", resultHTML("ok", "Allowed once", "logged in your audit log"));
+      setIsland("result", resultHTML("ok", "Allowed once", "saved in your History"));
       await wait(800);
       push("a", r("+ 3f9c2e1...a41b7d0 main -> main (forced update)"));
       S.a.doing = "Pushed to main";

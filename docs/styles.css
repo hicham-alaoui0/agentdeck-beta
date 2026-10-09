@@ -3853,26 +3853,49 @@ h2.metal .dim {
 .h-t code {
   color: var(--muted);
 }
+/* A switch, like the app's setup guide. */
 .h-btn {
+  position: relative;
   flex: none;
-  height: 28px;
-  padding: 0 12px;
+  width: 40px;
+  height: 24px;
   border-radius: 999px;
-  background: var(--text);
-  color: #000;
-  font-size: 12px;
-  font-weight: 600;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s var(--ease-out);
+  background: rgba(255, 255, 255, 0.14);
+  transition: background-color 0.2s ease;
 }
-.h-btn:active {
-  transform: scale(0.95);
+.h-btn::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s var(--ease-out);
 }
 .h-btn.on {
-  background: rgba(48, 209, 88, 0.15);
-  color: #4ade80;
+  background: #30d158;
+}
+.h-btn.on::after {
+  transform: translateX(16px);
+}
+.mini-gear {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: var(--muted);
+}
+.mini-gear svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
 }
 .edge {
   position: relative;
