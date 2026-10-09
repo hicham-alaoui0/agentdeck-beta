@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pair your phone · AgentDeck</title>
+    <meta name="robots" content="noindex" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#050506" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css?v=202610092311" />
+    <style>
+      .pair {
+        min-height: 100svh;
+        max-width: 440px;
+        margin: 0 auto;
+        padding: calc(48px + env(safe-area-inset-top)) var(--gutter) 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 14px;
+        text-align: center;
+      }
+      .pair-mark {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 6px;
+      }
+      .pair h1 {
+        font-size: 30px;
+        letter-spacing: -0.02em;
+      }
+      .pair p {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .pair .pc {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .pair-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .pair-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 52px;
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--text);
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+      .pair-btn.primary {
+        background: #f5f5f7;
+        color: #000;
+        box-shadow: none;
+      }
+      .pair small {
+        color: var(--faint);
+        line-height: 1.5;
+      }
+      .pair .bad {
+        color: #ff8a80;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="pair">
+      <img class="pair-mark" src="assets/favicon.svg" alt="" />
+      <h1>Pair your phone</h1>
+      <p id="lead">Connect this phone to AgentDeck on <span class="pc" id="pc">your PC</span>.</p>
+      <div class="pair-actions" id="actions">
+        <a class="pair-btn primary" id="open" href="#">Open in the AgentDeck app</a>
+        <!-- Back once the APK is in a release:
+        <a class="pair-btn" href="https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_android.apk">Get the Android app</a>
+        -->
+        <a class="pair-btn" id="browser" href="#">Use it in this browser instead</a>
+      </div>
+      <small id="note">The pairing code stays on this phone: it's in the part of the link that browsers never send.</small>
+    </main>
+    <script>
+      // The code is in the fragment (never sent to this server). Read it, take
+      // it out of the address bar, and hand it on: to the app, or to the PC's
+      // own page on the local network.
+      (function () {
+        var code = location.hash.slice(1);
+        history.replaceState(null, "", location.pathname);
+        var info = null;
+        try {
+          if (code.indexOf("2~") === 0) {
+            // Compact: 2~id~key~lan~pc~relay~room
+            var f = code.split("~").map(function (x) { return decodeURIComponent(x || ""); });
+            info = { v: 1, id: f[1], k: f[2], lan: f[3], pc: f[4] };
+          } else {
+            info = JSON.parse(atob(code.replace(/-/g, "+").replace(/_/g, "/")));
+          }
+        } catch (e) {}
+        if (!info || info.v !== 1 || !info.id || !info.k) {
+          document.getElementById("lead").innerHTML =
+            '<span class="bad">This link is missing its pairing code.</span> On your PC, open AgentDeck → Settings → Phone and scan the code again.';
+          document.getElementById("open").remove();
+          document.getElementById("browser").remove();
+          return;
+        }
+        if (info.pc) document.getElementById("pc").textContent = info.pc;
+        document.getElementById("open").href = "agentdeck://pair#" + code;
+        if (info.lan && /^[\w.:-]+$/.test(info.lan)) {
+          document.getElementById("browser").href = "http://" + info.lan + "/#" + info.id + "." + info.k;
+        } else {
+          document.getElementById("browser").remove();
+        }
+      })();
+    </script>
+  </body>
+</html>
