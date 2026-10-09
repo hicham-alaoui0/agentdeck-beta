@@ -8,7 +8,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="theme-color" content="#050506" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=202610092311" />
+    <link rel="stylesheet" href="styles.css?v=202610092333" />
     <style>
       .pair {
         min-height: 100svh;
@@ -65,6 +65,17 @@
         color: var(--faint);
         line-height: 1.5;
       }
+      .pair-step {
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      .pair-step b {
+        color: var(--text);
+      }
       .pair .bad {
         color: #ff8a80;
       }
@@ -77,12 +88,14 @@
       <p id="lead">Connect this phone to AgentDeck on <span class="pc" id="pc">your PC</span>.</p>
       <div class="pair-actions" id="actions">
         <a class="pair-btn primary" id="open" href="#">Open in the AgentDeck app</a>
-        <!-- Back once the APK is in a release:
-        <a class="pair-btn" href="https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_android.apk">Get the Android app</a>
-        -->
+        <p class="pair-step" id="installing" hidden>
+          <b>Downloading the app…</b><br />
+          Open the download and tap <b>Install</b>. Then come back here and tap the button again.
+        </p>
+        <a class="pair-btn" id="get" href="https://github.com/hicham-alaoui0/agentdeck-beta/releases/latest/download/AgentDeck_android.apk">Get the Android app</a>
         <a class="pair-btn" id="browser" href="#">Use it in this browser instead</a>
       </div>
-      <small id="note">The pairing code stays on this phone: it's in the part of the link that browsers never send.</small>
+      <small id="note">No app yet? The button downloads it first.</small>
     </main>
     <script>
       // The code is in the fragment (never sent to this server). Read it, take
@@ -104,14 +117,43 @@
         if (!info || info.v !== 1 || !info.id || !info.k) {
           document.getElementById("lead").innerHTML =
             '<span class="bad">This link is missing its pairing code.</span> On your PC, open AgentDeck → Settings → Phone and scan the code again.';
-          document.getElementById("open").remove();
-          document.getElementById("browser").remove();
+          document.getElementById("actions").remove();
+          document.getElementById("note").remove();
           return;
         }
         if (info.pc) document.getElementById("pc").textContent = info.pc;
-        document.getElementById("open").href = "agentdeck://pair#" + code;
+        var apk = document.getElementById("get").href;
+        var open = document.getElementById("open");
+        var android = /Android/i.test(navigator.userAgent);
+        if (android) {
+          // One button: Android opens the app, or, when it isn't installed,
+          // Chrome follows the fallback and downloads it. An intent link
+          // can't carry a #, so the code rides in ?c= (the app reads both).
+          open.href =
+            "intent://pair?c=" + code +
+            "#Intent;scheme=agentdeck;package=dev.agentdeck.mobile;S.browser_fallback_url=" +
+            encodeURIComponent(apk) + ";end";
+          open.addEventListener("click", function () {
+            // Still here a moment later: the app wasn't there, so it's downloading.
+            setTimeout(function () {
+              if (document.visibilityState === "visible") {
+                document.getElementById("installing").hidden = false;
+                document.getElementById("get").style.display = "none";
+                document.getElementById("note").hidden = true;
+                open.textContent = "Installed? Open the app";
+              }
+            }, 1500);
+          });
+        } else {
+          // No app for this phone yet: the browser is the way.
+          open.remove();
+          document.getElementById("get").remove();
+          document.getElementById("note").textContent = "The iPhone app is on its way. Until then, this works in the browser.";
+        }
         if (info.lan && /^[\w.:-]+$/.test(info.lan)) {
-          document.getElementById("browser").href = "http://" + info.lan + "/#" + info.id + "." + info.k;
+          var b = document.getElementById("browser");
+          b.href = "http://" + info.lan + "/#" + info.id + "." + info.k;
+          if (!android) b.className = "pair-btn primary";
         } else {
           document.getElementById("browser").remove();
         }
