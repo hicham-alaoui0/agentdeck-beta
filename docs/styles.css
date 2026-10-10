@@ -2556,6 +2556,247 @@ h2.metal .dim {
   max-width: 460px;
 }
 
+/* Phone: the Android app, as a small phone you can tap */
+.c-phone {
+  grid-column: span 6;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 0;
+}
+.c-phone .cell-copy {
+  flex: 1 1 0;
+  padding-bottom: 28px;
+  align-self: center;
+}
+.c-phone .viz {
+  flex: 1 1 0;
+  padding: 28px;
+}
+.c-phone .viz > * {
+  max-width: 300px;
+}
+.pm-points {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  max-width: 470px;
+  list-style: none;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.pm-points li {
+  position: relative;
+  padding-left: 22px;
+}
+.pm-points li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--limited);
+  box-shadow: 0 0 10px var(--limited);
+}
+.pm-points b {
+  color: var(--text);
+  font-weight: 600;
+}
+.cell-copy .pm-how {
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--faint);
+}
+.pm {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-top: 26px;
+}
+/* The notification that brought you here. It leaves once you answer. */
+.pm-notif {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 264px);
+  padding: 9px 12px;
+  border-radius: 16px;
+  background: rgba(38, 38, 42, 0.86);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    0 14px 34px rgba(0, 0, 0, 0.55);
+  font-size: 12.5px;
+  translate: -50% 0;
+  transition:
+    translate 0.45s var(--spring),
+    opacity 0.25s ease;
+}
+.pm-notif span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.pm-notif small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.pm-notif time {
+  align-self: flex-start;
+  color: var(--faint);
+  font-size: 11px;
+}
+.pm.answered .pm-notif {
+  translate: -50% -14px;
+  opacity: 0;
+}
+.pm-frame {
+  width: 216px;
+  padding: 7px;
+  border-radius: 36px;
+  background: linear-gradient(160deg, #2c2c30, #111113 40%, #1c1c1f);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 30px 60px -20px rgba(0, 0, 0, 0.8),
+    0 0 60px -20px color-mix(in srgb, var(--limited) 40%, transparent);
+}
+.pm-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 372px;
+  padding: 16px 12px 10px;
+  border-radius: 30px;
+  background: #000;
+  overflow: hidden;
+}
+.pm-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.pm-top i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--done);
+}
+.pm-top b {
+  flex: 1;
+  color: var(--text);
+  font-weight: 600;
+}
+.pm-count {
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--waiting);
+  color: #000;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  transition: scale 0.3s var(--spring), opacity 0.2s ease;
+}
+.pm.answered .pm-count {
+  scale: 0;
+  opacity: 0;
+}
+.pm-agent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: radial-gradient(60% 55% at 50% 42%, rgba(255, 159, 128, 0.2), transparent 75%);
+}
+.pm-agent b {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 650;
+}
+.pm-agent small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.pm-ask {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pm-say {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.pm-ask code {
+  padding: 6px 9px;
+  border-radius: 9px;
+  background: #000;
+  color: #d5d9df;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  transition: opacity 0.25s ease;
+}
+.pm-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  transition: opacity 0.25s ease;
+}
+.pm-btns button {
+  height: 36px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  color: var(--failed);
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    transform 0.15s var(--ease-out),
+    background-color 0.15s ease;
+}
+.pm-btns button[data-act="allow"] {
+  background: var(--text);
+  color: #000;
+}
+.pm-btns button:active {
+  transform: scale(0.96);
+}
+.pm.answered .pm-btns,
+.pm.answered .pm-ask code {
+  opacity: 0.25;
+  pointer-events: none;
+}
+.pm-tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 6px 10px 2px;
+}
+.pm-tabs i {
+  width: 18px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
+}
+.pm-tabs i.on {
+  background: var(--text);
+}
+
 /* Sessions: a small replica of the app window */
 .mini-app {
   padding: 10px;
@@ -4382,6 +4623,13 @@ h2.metal .dim {
 }
 
 @media (max-width: 900px) {
+  .c-phone {
+    flex-direction: column;
+  }
+  .c-phone .cell-copy {
+    align-self: stretch;
+    padding-bottom: 8px;
+  }
   .sec-head.split {
     grid-template-columns: 1fr;
   }

@@ -77,6 +77,7 @@
       { sel: "#rcard .r-input", text: "Type a reply and press Enter." },
       { sel: "#longcmd .lc-set", text: "Choose when you want to be told." },
       { sel: "#ci .switch", text: "Flip this on and off." },
+      { sel: "#phone .pm-btns", text: "Tap Allow on the phone. Same answer, from the sofa." },
     ],
     safety: [
       { sel: ".rd-input", text: "Type any command here. I'll tell you how risky it is." },

@@ -522,6 +522,32 @@
     }),
   );
 
+  // ---------- Phone ----------
+
+  const pm = $("#phone");
+  if (pm) {
+    const pmFace = $(".face", pm).mascot;
+    const pmSay = $(".pm-say", pm);
+    const asks = pmSay.textContent;
+    let pmTimer = 0;
+    $$(".pm-btns button", pm).forEach((b) =>
+      b.addEventListener("click", () => {
+        const allow = b.dataset.act === "allow";
+        pm.classList.add("answered");
+        pmFace?.setMood(allow ? "happy" : "idle");
+        pmSay.textContent = allow ? "Thanks! On it." : "Okay, I won't.";
+        window.AD?.emit?.("decision", { act: b.dataset.act, el: pm });
+        clearTimeout(pmTimer);
+        // A moment later it needs you again, so the next visitor can try.
+        pmTimer = setTimeout(() => {
+          pm.classList.remove("answered");
+          pmFace?.setMood("waiting");
+          pmSay.textContent = asks;
+        }, 4200);
+      }),
+    );
+  }
+
   // ---------- Reply ----------
 
   const rcard = $("#rcard");
