@@ -19,7 +19,7 @@
     <link rel="canonical" href="https://hicham-alaoui0.github.io/agentdeck-beta/" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="assets/fonts/inter-opsz-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=202610101827" />
+    <link rel="stylesheet" href="styles.css?v=202610101919" />
     <script>
       document.documentElement.classList.add("js");
     </script>
@@ -573,7 +573,7 @@
           <div class="sec-head center">
             <p class="kicker reveal" style="--kc: var(--done)"><b>04</b><i></i>Privacy</p>
             <h2 class="reveal metal huge" style="--d: 60ms">Everything stays<br />on your PC.</h2>
-            <p class="lead reveal" style="--d: 120ms">No telemetry. No analytics. No accounts. AgentDeck makes no network calls of its own.</p>
+            <p class="lead reveal" style="--d: 120ms">No telemetry. No analytics. No accounts. AgentDeck connects to nothing unless you switch it on.</p>
           </div>
           <div class="pcols">
             <article class="glass reveal">
@@ -590,8 +590,8 @@
               <span class="p-k">Sends</span>
               <p class="p-nothing">Nothing.</p>
               <p class="p-small">
-                The one exception is opt-in: <b>CI status</b> asks <em>your</em> GitHub CLI about your own repo after an
-                agent pushes. Off by default.
+                Unless you switch it on: <b>update checks</b>, <b>CI status</b> through <em>your</em> GitHub CLI, and
+                <b>your phone from anywhere</b>, encrypted so the relay in between can't read it. All off by default.
               </p>
             </article>
           </div>
@@ -706,7 +706,11 @@
             </details>
             <details class="reveal">
               <summary>Does it send my code or prompts anywhere?</summary>
-              <div><p>No. There's no telemetry, no analytics and no account. The only network use is the optional CI status, which asks your own GitHub CLI (<code>gh</code>) after an agent pushes. It's off until you turn it on.</p></div>
+              <div><p>No. There's no telemetry, no analytics and no account. The network is used only by features you switch on: update checks, CI status through your own GitHub CLI (<code>gh</code>), and your phone from anywhere, where everything is encrypted between your phone and your PC. <a href="privacy.html">The details</a>.</p></div>
+            </details>
+            <details class="reveal">
+              <summary>Can I answer from my phone?</summary>
+              <div><p>Yes, with the Android app. In Settings → Phone, click <b>Connect a phone</b> and scan the code with your phone's camera: the page that opens installs the app and pairs it. On your Wi-Fi it talks to your PC directly. Turn on <b>From anywhere</b> to reach it away from home and get a notification when an agent needs you. It works on phones without Google services too. iPhone comes later; until then the page works in any phone's browser on your Wi-Fi.</p></div>
             </details>
             <details class="reveal">
               <summary>Does it change my agents' settings?</summary>
@@ -737,7 +741,7 @@
             </a>
           </div>
           <p class="file reveal" style="--d: 180ms">
-            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.17.0</span> · 5 MB · installs per user, no admin rights
+            <code>AgentDeck_x64-setup.exe</code> · v<span data-version>0.18.0</span> · 5 MB · installs per user, no admin rights
           </p>
           <p class="file-more reveal" style="--d: 200ms">
             <a href="https://github.com/hicham-alaoui0/agentdeck-beta/releases">Release notes and older versions</a>
@@ -800,9 +804,9 @@
       </div>
     </footer>
 
-    <script src="js/crew.js?v=202610101827"></script>
-    <script src="js/stage.js?v=202610101827"></script>
-    <script src="js/main.js?v=202610101827"></script>
-    <script src="js/buddy.js?v=202610101827"></script>
+    <script src="js/crew.js?v=202610101919"></script>
+    <script src="js/stage.js?v=202610101919"></script>
+    <script src="js/main.js?v=202610101919"></script>
+    <script src="js/buddy.js?v=202610101919"></script>
   </body>
 </html>

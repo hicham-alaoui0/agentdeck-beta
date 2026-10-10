@@ -7,7 +7,7 @@
     <meta name="description" content="AgentDeck collects nothing. Everything stays on your computer." />
     <meta name="theme-color" content="#050506" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=202610101827" />
+    <link rel="stylesheet" href="styles.css?v=202610101919" />
     <style>
       .doc {
         max-width: 720px;
@@ -106,12 +106,12 @@
     </a>
     <main class="doc">
       <h1>Privacy policy</h1>
-      <p class="updated">Last updated: 7 October 2026</p>
-      <p class="short"><strong>Short version: AgentDeck collects nothing. Everything stays on your computer.</strong></p>
+      <p class="updated">Last updated: 10 October 2026</p>
+      <p class="short"><strong>Short version: AgentDeck collects nothing. Everything stays on your computer, unless you turn on one of the optional features below.</strong></p>
 
       <h2>What AgentDeck does with your data</h2>
       <ul>
-        <li><b>No telemetry, no analytics, no accounts.</b> AgentDeck never sends anything to its author or to any server.</li>
+        <li><b>No telemetry, no analytics, no accounts.</b> Out of the box, AgentDeck never connects to any server. Each feature below that does is off until you turn it on.</li>
         <li>
           <b>What it reads, locally:</b> the session files and logs of Claude Code and Codex on your computer, and the
           permission requests those agents send it through their hooks. It does not read their login credentials.
@@ -138,10 +138,30 @@
         </li>
         <li>
           <b>Your phone (optional):</b> when you turn on <b>Settings → Phone</b>, AgentDeck listens on your local network
-          so a phone you pair by QR code can show your sessions and answer requests. The connection stays inside your
-          network (or your Tailscale network), is encrypted with a key that only the QR code carries, and never goes
-          through any server. Paired phones are kept in memory only and forgotten when AgentDeck restarts. It is off by
-          default.
+          so a phone you pair by QR code can show your sessions and answer requests. Everything between the phone and
+          your PC is encrypted with a key only those two hold. The phones you paired are remembered on your PC,
+          encrypted with your Windows account; the phone keeps its pairing in the app. It is off by default.
+        </li>
+        <li>
+          <b>From anywhere (optional):</b> with <b>Settings → Phone → From anywhere</b> on, your PC also connects to the
+          AgentDeck relay (a Cloudflare Worker run by AgentDeck's author) so a paired phone can reach it away from your
+          Wi-Fi. The relay passes the encrypted messages along and cannot read them. What it does see: a random room id
+          for your PC, the random ids of the phones you paired, when they connect, and IP addresses, as any server
+          does, under <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare's privacy policy</a>.
+          It keeps no log of your sessions. It is off until you turn it on.
+        </li>
+        <li>
+          <b>Notifications on your phone (with From anywhere):</b> so the phone can say "An agent needs you" while the
+          app is closed, your PC asks the relay to signal the phone. The signal has no details in it: which agent and
+          what it asks appear only in the app, over the encrypted connection. On phones with Google Play services the
+          signal is a Firebase Cloud Messaging notification, so Google receives a device token for the AgentDeck app,
+          under <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>. On phones
+          without them (Huawei and others) the app keeps its own connection to the relay instead, and Google isn't
+          involved.
+        </li>
+        <li>
+          <b>The phone app</b> stores its pairing and today's answer count on the phone, and nothing else. It has no
+          analytics.
         </li>
       </ul>
 
@@ -194,7 +214,7 @@
         <p>© 2026 AgentDeck</p>
       </div>
     </footer>
-    <script src="js/crew.js?v=202610101827"></script>
+    <script src="js/crew.js?v=202610101919"></script>
     <script>
       Crew.mount(document);
     </script>
