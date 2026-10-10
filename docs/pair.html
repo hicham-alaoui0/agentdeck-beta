@@ -8,7 +8,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="theme-color" content="#050506" />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=202610092333" />
+    <link rel="stylesheet" href="styles.css?v=202610101827" />
     <style>
       .pair {
         min-height: 100svh;
@@ -122,7 +122,11 @@
           return;
         }
         if (info.pc) document.getElementById("pc").textContent = info.pc;
-        var apk = document.getElementById("get").href;
+        // A fresh address each time, so the phone downloads the current app
+        // instead of reusing a copy it saved earlier.
+        var get = document.getElementById("get");
+        get.href += "?t=" + Date.now();
+        var apk = get.href;
         var open = document.getElementById("open");
         var android = /Android/i.test(navigator.userAgent);
         if (android) {
